@@ -5,7 +5,7 @@ This documentation covers using the linked open data ressource about the 'Kanton
 ### List of available data entities
 ...
 ### Example queries
-- https://github.com/openZH/krdb-lod/examples
+- https://github.com/openZH/krdb-lod/blob/master/examples
 ## GitHub
 The relevant repositories are:
-- https://github.com/openZH/krdb-lod/documentation (This documentation)
+- https://github.com/openZH/krdb-lod/blob/master/readme.md (This documentation)
