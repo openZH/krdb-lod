@@ -1,0 +1,14 @@
+# von einem Person-Modell-Element kommt man zu seiner Quelle ueber die ?person_erzeugung-Aktivitaet:
+# Sinn dieses "Umwegs" ist die Angleichung an die Modellierung von Prov-O, wo Dinge (Dokumente, Modell-Elemente) aus Aktivitaeten (Erzeugung, Aenderung) entstehen.  Diese Aktivitaeten benutzen ursprueglicheres Material, in unserem Fall die ?person_quelle, die mit "person_quellen_angabe" verbal beschreibt, wo das Person-Modell-Element herkommt.
+select	?person ?person_erzeugung ?person_quelle ?p ?o
+where
+{	
+	graph	<https://linked.opendata.swiss/graph/zhkrdb/ld/10/meta/person>	
+	{	
+
+   		?person_erzeugung kr_10_rel:generated ?person .
+		?person_erzeugung kr_10_rel:person_quelle ?person_quelle .
+        ?person_quelle ?p ?o .
+    }	
+}
+ORDER BY ?person
