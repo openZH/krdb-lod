@@ -1,0 +1,8 @@
+# ueber subClassOf- und subPropertyOf-Statements haengen wir unsere eigenen Ontologie-Elemente in verbreiteteres Material ein.  Damit das Einhaengen Wirkung zeigt, muss RDFS-Reasoning zur Query-Zeit eingeschaltet sein.
+select *
+where { 
+	graph <https://linked.opendata.swiss/graph/zhkrdb/ld/10/affix/omnes> { 
+		?s ?p ?o 
+	} 
+}
+ORDER BY ?s
