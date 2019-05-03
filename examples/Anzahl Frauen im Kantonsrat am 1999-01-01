@@ -1,0 +1,25 @@
+select (count(distinct ?person) as ?anzahl_frauen_1999_01_01)
+where { 
+	graph <https://linked.opendata.swiss/graph/zhkrdb/ld/10/res/rat> { 
+		kr_10_res_rat:Kantonsrat kr_10_rel:einsitz ?kr_einsitz
+	} 
+	graph <https://linked.opendata.swiss/graph/zhkrdb/ld/10/res/einsitz> { 
+		?kr_einsitz kr_10_rel:person ?person .
+        ?kr_einsitz kr_10_rel:zeitintervall ?zeitintervall .
+        ?zeitintervall kr_10_rel:datum_in ?datum_in .
+        ?datum_in kr_10_rel:jahr ?datum_in_jahr .
+        ?datum_in kr_10_rel:monat ?datum_in_monat .
+        ?datum_in kr_10_rel:tag ?datum_in_tag .
+        BIND(CONCAT(STR(?datum_in_jahr), "-", STR(?datum_in_monat), "-", STR(?datum_in_tag), "^^xsd:date")as ?datum_in_xsd)
+        FILTER(?datum_in_xsd <= "1999-01-01"^^xsd:date)
+        ?zeitintervall kr_10_rel:datum_ex ?datum_ex .
+        ?datum_ex kr_10_rel:jahr ?datum_ex_jahr .
+        ?datum_ex kr_10_rel:monat ?datum_ex_monat .
+        ?datum_ex kr_10_rel:tag ?datum_ex_tag .
+        BIND(CONCAT(STR(?datum_ex_jahr), "-", STR(?datum_ex_monat), "-", STR(?datum_ex_tag), "^^xsd:date")as ?datum_ex_xsd)
+        FILTER(?datum_ex_xsd >= "1999-01-01"^^xsd:date)
+	} 
+	graph <https://linked.opendata.swiss/graph/zhkrdb/ld/10/res/person> { 
+        ?person rdf:type kr_10_genus:Person_w .
+	} 
+}
