@@ -1,0 +1,15 @@
+# wir zaehlen Berufe, Personen und bilden den Quotienten der gefundenen Anzahlen:
+select (count(distinct ?beruf) as ?anzahl_berufe) (count(?person) as ?anzahl_personen_mit_beruf) (?anzahl_personen_mit_beruf/?anzahl_berufe as ?durchschnittliche_anzahl_personen_pro_beruf)
+where 
+{ 
+    # Berufe sind Dinge im "beruf"-Graphen, die vom Typ "genus:Beruf" sind:
+    graph <https://linked.opendata.swiss/graph/zhkrdb/ld/10/res/beruf> 
+    { 
+		?beruf rdf:type kr_10_genus:Beruf . 
+	} 
+    # ?person ist die Menge von Dingen im Graphen "person", die in der Beziehung "beruf" zu einem der schon gefundenen "?beruf" stehen:
+    graph <https://linked.opendata.swiss/graph/zhkrdb/ld/10/res/person> 
+    { 
+		?person kr_10_rel:beruf ?beruf . 
+	} 
+}
