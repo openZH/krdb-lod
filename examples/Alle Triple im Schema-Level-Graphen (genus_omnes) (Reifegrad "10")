@@ -1,0 +1,7 @@
+select *
+where { 
+	graph <https://linked.opendata.swiss/graph/zhkrdb/ld/10/genus/omnes> { 
+		?s ?p ?o .
+	} 
+}
+ORDER BY ?s
