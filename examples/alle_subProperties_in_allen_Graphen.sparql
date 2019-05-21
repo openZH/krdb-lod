@@ -1,0 +1,6 @@
+select * where { 
+	# welcher Graph auch immer...:
+	graph ?g { 
+		?s rdfs:subPropertyOf ?o 
+	} 
+}

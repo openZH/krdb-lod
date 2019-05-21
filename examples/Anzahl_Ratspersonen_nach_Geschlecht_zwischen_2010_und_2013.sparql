@@ -1,0 +1,47 @@
+# Anzahl Ratspersonen nach Geschlecht zwischen 2010 und 2013
+## bei dieser Query ist es interessant, sie einmal ohne und einmal mit RDFS-Reasoning auszuführen!
+select	?person_type	?ref_year	(count(?person)	as	?p_count)	
+where
+{	
+	graph	<https://linked.opendata.swiss/graph/zhkrdb/ld/10/res/rat>	
+	{	
+		kr_10_res_rat:Kantonsrat	kr_10_rel:einsitz	?kr_einsitz	.
+	}	
+	graph	<https://linked.opendata.swiss/graph/zhkrdb/ld/10/res/einsitz>	
+	{	
+		#	Listen	mit	Referenz-Zeitpunkten
+		VALUES	(?ref_day)	{	("01-01")	}
+		VALUES	(?ref_year)	{	("2010")	("2011")	("2012")	("2013")	}
+
+		?kr_einsitz	kr_10_rel:person	?person	.
+		?kr_einsitz	kr_10_rel:zeitintervall	?zeitintervall	.
+
+		#	Anfangsdatum:
+		?zeitintervall	kr_10_rel:datum_in	?datum_in	.
+		?datum_in	kr_10_rel:jahr	?datum_in_jahr	.
+		?datum_in	kr_10_rel:monat	?datum_in_monat	.
+		?datum_in	kr_10_rel:tag	?datum_in_tag	.
+		#	Konvertieren	nach	xsd:date	um	die	SPARQL-Vergleichsfunktion	nutzen	zu	koennen;	einziffrige	Stringifizierungen	von	Monats-	und	Tages-Zahlen	praefingieren	vorher:
+		BIND(STRDT(REPLACE(CONCAT(STR(?datum_in_jahr),	"-0",	STR(?datum_in_monat),	"-0",	STR(?datum_in_tag)),	"-0([0-9][0-9])",	"-$1"),	xsd:date)	as	?datum_in_xsd)
+		#	Eintrittsdatum	vor	oder	gleich	dem	Referenz-Tag?:
+		FILTER(?datum_in_xsd	<=	STRDT(CONCAT(?ref_year,	"-",	?ref_day),	xsd:date))
+
+		#	Enddatum:
+		?zeitintervall	kr_10_rel:datum_ex	?datum_ex	.
+		?datum_ex	kr_10_rel:jahr	?datum_ex_jahr	.
+		?datum_ex	kr_10_rel:monat	?datum_ex_monat	.
+		?datum_ex	kr_10_rel:tag	?datum_ex_tag	.
+		BIND(STRDT(REPLACE(CONCAT(STR(?datum_ex_jahr),	"-0",	STR(?datum_ex_monat),	"-0",	STR(?datum_ex_tag)),	"-0([0-9][0-9])",	"-$1"),	xsd:date)	as	?datum_ex_xsd)
+		#	Austrittsdatum	nach	oder	gleich	dem	Referenz-Tag?:
+		FILTER(?datum_ex_xsd	>=	STRDT(CONCAT(?ref_year,	"-",	?ref_day),	xsd:date))
+	}	
+	graph	<https://linked.opendata.swiss/graph/zhkrdb/ld/10/res/person>	
+	{	
+		#	?person_type	bleibt	ungebunden,	weil	wir	nachher	gruppieren	und	dann	im	select	gruppenweise	zaehlen:
+		?person	rdf:type	?person_type	.
+	}	
+}
+GROUP	BY	?person_type	?ref_year
+ORDER	BY	?ref_year
+
+## diese Abfrage hat das klassische Problem, dass sie bei fehlenden Daten {insbesondere solange das Enddatum noch nicht bekannt ist} keine Ergebnisse zaehlt.  Liegt das an grundsaetzlicher Unkenntnis oder daran, dass ein Zustand zwar bekannterweise fortdauert, aber sein Ende noch nicht bekannt ist, weil es in der Zukunft liegt?
