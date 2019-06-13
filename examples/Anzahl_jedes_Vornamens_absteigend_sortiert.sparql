@@ -1,0 +1,18 @@
+select (count (?s) as ?anzahl_vorname) ?vorname
+where 
+{ 
+	# wir suchen im Graphen "person" alle Tripel, die einem Subjekt einen Vornamen zuordnen:
+	graph <https://linked.opendata.swiss/graph/zhkrdb/ld/10/res/person> 
+	{ 
+		?s kr_10_rel:vorname ?vorname
+	} 
+}
+# Tripel nach Vornamen gruppieren, damit dann in jeder Gruppe gezaehlt werden kann:
+GROUP BY ?vorname
+# Liste absteigend nach Anzahl sortieren:
+ORDER BY DESC(?anzahl_vorname)
+#
+# Zum Nachdenken:
+# - sollte man Vornamens-Listen [pro Person] aufsplitten?  
+# - wie erhielte man die Ordnung pro Person?  
+# - was bedeutet Vornamens-Haeufigkeit bei Vornamens-Listen {eine Person hat mehrere Vornamen}?

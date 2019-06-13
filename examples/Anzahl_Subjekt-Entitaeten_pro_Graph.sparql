@@ -1,0 +1,16 @@
+select (count (distinct ?s) as ?anzahl_tripel) ?graph
+where 
+{ 
+	graph ?graph 
+	{ 
+		?s ?p ?o .
+	} 
+}
+# zuerst nach Graphen gruppieren, damit dann darueber gezaehlt werden kann:
+GROUP BY ?graph
+# man kann entweder gar nicht sortieren oder nach Tripel-Anzahlen oder nach Graphen; wir sortieren nach Tripel-Anzahlen:
+ORDER BY ?anzahl_tripel
+#
+# Zum Nachdenken:
+# - Warum unterscheiden sich die Tripel-Anzahlen zwischen 1:1-Umsetzung und Domaenen-Modell?
+# - man kann diese Ergebnisse fuer jede Daten- und Transformations-Version persistieren und fuer Regressions-Tests (Plausibilitaets-Betrachtungen) vergleichen.

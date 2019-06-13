@@ -1,0 +1,11 @@
+# alle Attribute von Personen, die deren Vorname "Emil" ist:
+select *
+where 
+{ 
+	graph <https://linked.opendata.swiss/graph/zhkrdb/ld/10/res/person> 
+	{ 
+		?s kr_10_rel:vorname "Emil" .
+        	?s ?p1 ?o .
+	} 
+}
+ORDER BY ?s

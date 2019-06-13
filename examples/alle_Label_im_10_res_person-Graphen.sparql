@@ -1,0 +1,19 @@
+select *
+where 
+{
+	# alle Label im Graphen "person":
+	graph <https://linked.opendata.swiss/graph/zhkrdb/ld/10/res/person> 
+	{ 
+		?s rdfs:label ?o .
+	} 
+}
+ORDER BY ?s
+#
+# Sie werden sehr wahrscheinlich eine leere Ergebnis-Liste erhalten
+# Schalten Sie nun Reasoning ein und wiederholen Sie die Abfrage!
+# welche Labels erhalten Sie jetzt?
+# Warum erhalten Sie pro Subjekt mehrere Labels?
+# Welches sind die Properties, die die erhaltenen Subjekte mit den erhaltenen Objekten verbinden?
+# In welchem Graphen befindet sich die verantwortliche "subPropertyOf"?
+# Wie lange hat der Triplestore jeweils mit seiner Antwort gebraucht?
+
