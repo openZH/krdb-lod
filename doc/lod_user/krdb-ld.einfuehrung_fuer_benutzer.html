@@ -141,12 +141,16 @@ Lassen Sie sich mit der SPARQL-Abfrage<br />
 <p>Selbstverst&#228;ndlich holt man sich damit die ganze Semantik, die an diesem Modell-Element h&#228;ngt, &quot;ins Haus&quot;. Das ist gut so -- sollte aber auch der eigenen Absicht entsprechen.</p>
 <p>Das aktuelle KRDB-LD-Modell nutzt keine Fremd-Modell-Elemente im semantischen Sinn direkt. Lediglich im Ontologie-Mapping-Graphen werden Fremd-Identifier benutzt, im folgenden Beispiel die der Gemeinsamen Norm-Datei:</p>
 <blockquote>
-<p><a href="https://test.lindas-data.ch:8443/zhkrdb#!/query/select%09*%0Awhere%0A{%09%0A%09graph%09%3Chttps%3A%2F%2Flinked.opendata.swiss%2Fgraph%2Fzhkrdb%2Fld%2F10%2Fcopula%2Fperson%3E%09%0A%09{%09%0A%20%20%20%09%09%3Fs%20%3Chttps%3A%2F%2Fke.ji.zh.ch%2Fkrdb%2Fld%2F10%2Frelatio%2Fomnes%2Feq_real_gnd%3E%20%20%3Fo%20.%0A%20%20%20%20}%09%0A}%0A"><tt>SELECT *<br />WHERE<br />{ &#160; &#160;&#160;GRAPH &lt;https://linked.opendata.swiss/graph/zhkrdb/ld/10/copula/person&gt;<br />&#160;&#160;{<br />&#160;&#160;&#160;&#160;?s &lt;https://ke.ji.zh.ch/krdb/ld/10/relatio/omnes/eq_real_gnd&gt; ?o .<br />&#160;&#160;}<br />}<br /></tt></a></p>
+<a href="https://test.lindas-data.ch:8443/zhkrdb#!/query/select%09*%0Awhere%0A{%09%0A%09graph%09%3Chttps%3A%2F%2Flinked.opendata.swiss%2Fgraph%2Fzhkrdb%2Fld%2F10%2Fcopula%2Fperson%3E%09%0A%09{%09%0A%20%20%20%09%09%3Fs%20%3Chttps%3A%2F%2Fke.ji.zh.ch%2Fkrdb%2Fld%2F10%2Frelatio%2Fomnes%2Feq_real_gnd%3E%20%20%3Fo%20.%0A%20%20%20%20}%09%0A}%0A"><tt>SELECT *<br />WHERE<br />{ &#160; &#160;&#160;GRAPH &lt;https://linked.opendata.swiss/graph/zhkrdb/ld/10/copula/person&gt;<br />&#160;&#160;{<br />&#160;&#160;&#160;&#160;?s &lt;https://ke.ji.zh.ch/krdb/ld/10/relatio/omnes/eq_real_gnd&gt; ?o .<br />&#160;&#160;}<br />}<br /></tt></a>
+</blockquote>
+
+
 <h3 id="federated-queries">Federated Queries</h3>
 <p>Mit einer &quot;federated Query&quot; kann man an einen SPARQL-Endpoint eine &quot;<tt>SERVICE</tt>&quot;-Teil-Abfrage stellen, die er an einen anderen SPARQL-Endpoint weitergibt und dessen Ergebnisse in den lokalen Abfrage-Teil integriert:</p>
 <blockquote>
 <tt>SELECT ?a<br />FROM &lt;mybooks.rdf&gt;<br />{<br />&#160;&#160;?b dc:title ?title .<br />&#160;&#160;SERVICE &lt;http://sparql.org/books&gt;<br />&#160;&#160;&#160;&#160;{ ?s dc:title ?title . ?s dc:creator ?a }<br />}</tt>
 </blockquote>
+
 
 <h3 id="theorie-alignment">Theorie-Alignment</h3>
 <p>Hier nutzen mehrere Instanz-Ressourcen die selbe Ontologie {Modell auf Klassen-Ebene, Theorie}. Werden mehrere solche Instanz-Ressourcen parallel zusammen genutzt, f&#252;hlen sie sich bei der Nutzung, z.B. SPARQL-Queries an als w&#228;ren sie eins. Sie haben ja die gleiche Struktur und die Muster im Bedingungsteil von Abfragen sind immer am [gemeinsamen] Meta-Modell entlang gebaut.</p>
@@ -170,45 +174,45 @@ Lassen Sie sich mit der SPARQL-Abfrage<br />
 <h5 id="person">Person</h5>
 <p>Die zweite essentielle Entit&#228;t ist die Person. Das Kantonsrats-Modell zeichnet hierf&#252;r das Bild eines B&#252;rgers, der Beziehungen zu anderen Personen {via Zivilstand} und zu Institutionen haben kann, irgendwo wohnt, einen Beruf, ggf. akademischen Titel, eine Religionszugeh&#246;rigkeit, ein Geschlecht und als schweizer Spezialit&#228;t einen B&#252;rgerort &quot;hat&quot;.</p>
 <p>Die Menge an hier so beschriebenen Personen-Instanzen umfasst bisher Menschen, die irgendwann einmal Mitglied eines Z&#252;rcher Rates waren sowie deren Ehepartner. Es spr&#228;che aber nichts dagegen, eine Personen-&quot;Liste&quot; in Anspruch zu nehmen, die umfassender, also nicht auf Ratsmitglieder beschr&#228;nkt ist.</p>
-<p>Gewissermassen ist &quot;Person&quot; eine abstrakte Klasse, da sie eine geschlechtslose Person modelliert. Davon gibt es typischerweise keine Instanzen.</p>
+<p>Gewissermassen ist &quot;<tt>Person</tt>&quot; eine abstrakte Klasse, da sie eine geschlechtslose Person modelliert. Davon gibt es typischerweise keine Instanzen.</p>
 <p>Das Geschlecht einer Person ist als entsprechende Subklasse von Person modelliert:</p>
 <ul>
 <li>&quot;<tt>Person_w</tt>&quot; f&#252;r weibliche Personen</li>
 <li>&quot;<tt>Person_m</tt>&quot; f&#252;r m&#228;nnliche Personen .</li>
 </ul>
 <h4 id="beziehungen">Beziehungen</h4>
-<p>Bereits in obigem UML-Diagramm sehen wir die einfachen Beziehungen, die &quot;Person&quot; zu ihren Attributen hat {Wohnort, Beruf, ...}. Diese Beziehungen werden weiter unten kurz erl&#228;utert.</p>
-<p>Die wichtigen Beziehungen in unserem Modell sind aber in Wirklichkeit komplexer als wir sie in obigem UML-Diagramm dargestellt haben. Sie tragen vielmehr als Nutzlast ein kleines Modell, das die Art der Beziehung im Detail beschreibt. Ein Mittel, diese Nutzlast an eine Beziehung zu h&#228;ngen, ist, die direkte Kante durch eine Assoziationsklasse zu unterbrechen, an der dieses kleine Beziehungs-Modell h&#228;ngt. In unserem Fall lauten diese Assoziationsklassen &quot;Einsitz&quot;, &quot;Bindung&quot; und &quot;Zivilstand&quot;:</p>
+<p>Bereits in obigem UML-Diagramm sehen wir die einfachen Beziehungen, die &quot;<tt>Person</tt>&quot; zu ihren Attributen hat {<tt>Wohnort</tt>, <tt>Beruf</tt>, ...}. Diese Beziehungen werden weiter unten kurz erl&#228;utert.</p>
+<p>Die wichtigen Beziehungen in unserem Modell sind aber in Wirklichkeit komplexer als wir sie in obigem UML-Diagramm dargestellt haben. Sie tragen vielmehr als Nutzlast ein kleines Modell, das die Art der Beziehung im Detail beschreibt. Ein Mittel, diese Nutzlast an eine Beziehung zu h&#228;ngen, ist, die direkte Kante durch eine Assoziationsklasse zu unterbrechen, an der dieses kleine Beziehungs-Modell h&#228;ngt. In unserem Fall lauten diese Assoziationsklassen &quot;<tt>Einsitz</tt>&quot;, &quot;<tt>Bindung</tt>&quot; und &quot;<tt>Zivilstand</tt>&quot;:</p>
 <p><img style="uml_diagram" src="classdiagram_10_02.svg" alt="KRDB-Klassen-Modell in UML-Form" width="100%" /></p>
 <h5 id="person-in-der-mitgliedschafts-rolle">Person in der Mitgliedschafts-Rolle</h5>
 <p>Die zentrale Beziehung des Modells ist die der Mitgliedschaft, die beschreibt, welche Personen dem Rat w&#228;hrend welcher Zeitspannen angeh&#246;rt haben. Eine Person steht also in der Rolle eines Mitglieds in Beziehung zum Rat.</p>
-<p>An dieser Beziehung h&#228;ngt &#252;ber die Assoziationsklasse &quot;Einsitz&quot; als &quot;Nutzlast&quot; ein kleines Modell, das den Charakter der Mitgliedschaft genauer beschreibt:</p>
+<p>An dieser Beziehung h&#228;ngt &#252;ber die Assoziationsklasse &quot;<tt>Einsitz</tt>&quot; als &quot;Nutzlast&quot; ein kleines Modell, das den Charakter der Mitgliedschaft genauer beschreibt:</p>
 <ul>
-<li>ausser der einfachen Mitgliedschaft, gibt es Unterarten {&quot;Funktion&quot;}, die speziellere Rollen beschreiben, z.B. verschiedene Arten von Pr&#228;sident-schaft.</li>
-<li>die Mitgliedschaft ist fallweise einer politischen Interessensvertretung (Partei, Fraktion) zugeordnet</li>
-<li>die Mitgliedschaft ist einem Wahlkreis zugeordnet</li>
+<li>ausser der einfachen Mitgliedschaft, gibt es Unterarten {&quot;<tt>Funktion</tt>&quot;}, die speziellere Rollen beschreiben, z.B. verschiedene Arten von Pr&#228;sident-schaft.</li>
+<li>die Mitgliedschaft ist fallweise einer politischen Interessensvertretung (<tt>Partei</tt>, <tt>Fraktion</tt>) zugeordnet</li>
+<li>die Mitgliedschaft ist einem <tt>Wahlkreis</tt> zugeordnet</li>
 </ul>
 <h5 id="person-in-der-rolle-der-gebundenheit-an-die-interessen-einer-institution">Person in der Rolle der Gebundenheit an die Interessen einer Institution</h5>
 <p>Um m&#246;gliche Interessenskonflikte, in denen ein Ratsmitglied stehen k&#246;nnte, transparenter zu machen, werden Institutionen modelliert, die an eine Person Erwartungen an sein Verhalten haben k&#246;nnten. Z.B. sind das wirtschaftliche Verpflichtungen, die eine Person -- insbesondere ein Ratsmitglied -- gegen&#252;ber einer Institution haben kann, von der er Geld erh&#228;lt, z.B. Unternehmensbeteiligungen.</p>
-<p>Seit Beginn des Jahrhunderts ist die Transparenz sogar als Offenlegungspflicht f&#252;r Interessensbindungen gesetzlich festgeschrieben, im Kt. ZH zB im <a href="http://www2.zhlex.zh.ch/Appl/zhlex_r.nsf/0/08C56C56E70A348AC12581F4002999EC/$file/171.1_5.4.81_99.pdf">Kantonsratsgesetz LS 171.1 . 5a</a>, ebenso f&#252;r den <a href="https://www.zh.ch/bin/ktzh/rrb/beschluss.pdf?rrbNr=112&amp;name=RRB-2017-112&amp;year=2017&amp;_charset_=UTF-8">Regierungsrat (RRB 2017/112)</a>. Zumindestens die polit. Bindungen wurden hier in der KRDB auch fallweise auch f&#252;r &#228;ltere Mitglieder erhoben, z.B. &quot;Gemeinderat Meilen - Pr&#228;sident, von-bis&quot;...</p>
+<p>Seit Beginn dieses Jahrhunderts ist die Transparenz sogar als Offenlegungspflicht f&#252;r Interessensbindungen gesetzlich festgeschrieben, im Kt. ZH zB im <a href="http://www2.zhlex.zh.ch/Appl/zhlex_r.nsf/0/08C56C56E70A348AC12581F4002999EC/$file/171.1_5.4.81_99.pdf">Kantonsratsgesetz LS 171.1 . 5a</a>, ebenso f&#252;r den <a href="https://www.zh.ch/bin/ktzh/rrb/beschluss.pdf?rrbNr=112&amp;name=RRB-2017-112&amp;year=2017&amp;_charset_=UTF-8">Regierungsrat (RRB 2017/112)</a>. Zumindestens die polit. Bindungen wurden hier in der KRDB auch fallweise auch f&#252;r &#228;ltere Mitglieder erhoben, z.B. &quot;Gemeinderat Meilen - Pr&#228;sident, von-bis&quot;...</p>
 <h5 id="person-in-der-rolle-als-zivilstands-partner">Person in der Rolle als Zivilstands-Partner</h5>
-<p>Interessenskonflikte k&#246;nnen sich aber nicht nur durch wirtschaftliche Beziehungen ergeben. Auch soziale Bindungen eines Rates k&#246;nnen sein Verhalten beeinflussen. Die herausragende aktenkundige soziale Beziehung ist die eheliche Beziehung zu einem Partner. Diese Beziehung ist durch den Zivilstand modelliert.</p>
+<p>Interessenskonflikte k&#246;nnen sich aber nicht nur durch wirtschaftliche Beziehungen ergeben. Auch soziale Bindungen eines Rates k&#246;nnen sein Verhalten beeinflussen. Die herausragende aktenkundige soziale Beziehung ist die eheliche Beziehung zu einem Partner. Diese Beziehung ist durch den <tt>Zivilstand</tt> modelliert.</p>
 <h2 id="die-modell-elemente-im-detail">Die Modell-Elemente im Detail</h2>
 <p>Bisher haben wir das Kern-Skelett des Modells skizziert. Das komplette fachliche Modell enth&#228;lt aber noch weitere Feinheiten:</p>
 <p><img style="uml_diagram" src="classdiagram_10_01.svg" alt="KRDB-Klassen-Modell in UML-Form" width="100%" /></p>
 <p>Insbesondere zeigt es, dass die meisten Modell-Sachverhalte nur w&#228;hrend bestimmter Zeit-Intervalle g&#252;ltig waren. Das UML-Modell oben stellt dies als Zeit-Intervall-Klasse {ganz oben} dar. Im KRDB-Modell sind Zeitintervalle aber nicht errerbt, sondern &quot;inline&quot; in den jeweiligen Entit&#228;ten selbst enthalten.</p>
-<p>Ausserdem sind nun die m&#246;glichen Werte Spezialisierungen f&#252;r &quot;Funktion&quot; und Zivilstand ausmodelliert.</p>
+<p>Ausserdem sind nun die m&#246;glichen Werte Spezialisierungen f&#252;r &quot;<tt>Funktion</tt>&quot; und &quot;<tt>Zivilstand</tt>&quot; ausmodelliert.</p>
 <h3 id="die-haupt-beziehungen-im-modell">Die Haupt-Beziehungen im Modell</h3>
 <p>Von der Person zu unterscheiden sind die Rollen, in denen eine Person in einer Situation auftreten kann. Diese Rollen sind beschrieben als die Beziehungen, die auf eine Person[en-Entit&#228;t] verweisen.</p>
 <h4 id="einsitz">Einsitz</h4>
 <p>Der genauere Charakter der Mitgliedschaft einer Person in einem Rat ist von mehreren &quot;Parametern&quot; gepr&#228;gt. Es ist &#252;blich, solche reichhaltigen Beziehungen sozusagen zu verdinglichen. Man unterbricht dabei die Beziehung durch einen Knoten, der die ganze Nutzlast der Characteristica der Beziehung tr&#228;gt. Einen solchen Zwischen-Knoten nennt man Assoziations-Klasse.</p>
-<p>Die Assoziationsklasse, die die Characteristica der Mitgliedschaft einer Person in einem Rat tr&#228;gt, heisst in unserem Modell &quot;Einsitz&quot;.</p>
+<p>Die Assoziationsklasse, die die Characteristica der Mitgliedschaft einer Person in einem Rat tr&#228;gt, heisst in unserem Modell &quot;<tt>Einsitz</tt>&quot;.</p>
 <h5 id="funktion">Funktion</h5>
 <p>Normalerweise ist eine Person w&#228;hrend eines Einsitzes in einem Rat einfaches Mitglied.</p>
 <p>Sie kann aber w&#228;hrend bestimmter Perioden eine spezieller Art der Mitgliedschaft bekleiden, z.B. als Rats-Pr&#228;sident. Im UML-Diagramm oben sind diese Unterarten als Subklassen von &quot;Funktion&quot; dargestellt. Im RDF-Modell sind die Unterarten als Sub-Properties der allgemeinen Mitglieds-Property modelliert.</p>
-<h5 id="partei-association">Partei-Association</h5>
+<h5 id="parteiassociation">ParteiAssociation</h5>
 <p>Eine Person kann w&#228;hrend eines Einsitzes zu bestimmten Perioden als Vertreter einer Partei und als Vertreter einer Fraktion Mitglied des Rates sein.</p>
-<p>&quot;Partei-Association&quot; ist eine Assoziationsklasse, die die Beziehung von Einsitz zu Partei und Fraktion genauer beschreibt.</p>
+<p>&quot;<tt>ParteiAssociation</tt>&quot; ist eine Assoziationsklasse, die die Beziehung von <tt>Einsitz</tt> zu <tt>Partei</tt> und <tt>Fraktion</tt> genauer beschreibt.</p>
 <h5 id="partei">Partei</h5>
 <p>Partei ist das, was auch der B&#252;rger &quot;draussen auf der Strasse&quot; unter Partei versteht.</p>
 <p>Im gegebenen Modell hat diese Entit&#228;t keine weitere Struktur.</p>
@@ -216,7 +220,7 @@ Lassen Sie sich mit der SPARQL-Abfrage<br />
 <p>Fraktion ist das, was auch der B&#252;rger &quot;draussen auf der Strasse&quot; unter Fraktion versteht.</p>
 <p>Im gegebenen Modell hat diese Entit&#228;t keine weitere Struktur.</p>
 <h5 id="wahlkreis">Wahlkreis</h5>
-<p>Diese Angabe ist der Wahlkreis, als Vertreter dessen ein Mitglied in einem Rat einsitzt.</p>
+<p>Diese Angabe ist der <tt>Wahlkreis</tt>, als Vertreter dessen ein Mitglied in einem Rat einsitzt.</p>
 <h6 id="&#252;bung-3">&#220;bung</h6>
 Die folgende SPARQL-Abfrage listet alle Personen auf, die irgendwann einmal als Mitglied einer Partei mit der Bezeichnung &quot;CVP&quot; Pr&#228;sidiums-Mitglied waren:
 <blockquote>
@@ -226,7 +230,7 @@ Die folgende SPARQL-Abfrage listet alle Personen auf, die irgendwann einmal als 
 
 <h4 id="bindung">Bindung</h4>
 <p>Eine Person, die Ratsmitglied ist, steht &#252;blicherweise nicht isoliert in der Gesellschaft, sondern hat weitere Beziehungen zu anderen Personen und Institutionen. Die Kantonsratsdatenbank modelliert die Beziehung zwischen Institutionen und Personen um transparent zu machen, welche anderen, ausser Partei- und Fraktions-Interessen eine Rats-Mitglieds-Person m&#246;glicherweise verfolgt.</p>
-<p>&quot;Bindung&quot; ist eine Assoziationsklasse, auf der Beziehung zwischen Institutionen und Personen. Die Art der Bindung ist durch die Angabe der Bindungskategorie parametriert, die die spezielle Art der Bindung zwischen einer Person und einer Institution ausdr&#252;ckt. Der einzige Wert, der momentan im Datenbestand vorkommt, ist &quot;politisches Amt&quot;.</p>
+<p>&quot;<tt>Bindung</tt>&quot; ist eine Assoziationsklasse, auf der Beziehung zwischen Institutionen und Personen. Die Art der Bindung ist durch die Angabe der Bindungskategorie parametriert, die die spezielle Art der Bindung zwischen einer Person und einer Institution ausdr&#252;ckt. Der einzige Wert, der momentan im Datenbestand vorkommt, ist &quot;politisches Amt&quot;.</p>
 <h4 id="zivilstand">Zivilstand</h4>
 <p>Eine besonders gut fassbare enge Beziehung zu anderen Personen ist Ehe.</p>
 <p>Deshalb modelliert die KRDB die Lebensphasen, w&#228;hrend der und mit wem die R&#228;te verheiratet waren.</p>
@@ -234,10 +238,10 @@ Die folgende SPARQL-Abfrage listet alle Personen auf, die irgendwann einmal als 
 <h3 id="die-attribute-von-person">Die Attribute von Person</h3>
 <h4 id="name-und-vorname">Name und Vorname</h4>
 <p>Name und Vorname sind zwei spezielle Labels mit denen man &#252;ber eine Person spricht.</p>
-<p>UML-technisch h&#228;ngt ein String-Literal &#252;ber eine Beziehung {&quot;Property&quot;} &quot;name&quot; bzw. &quot;vorname&quot; an Personen. Die Beziehungen &quot;name&quot; und &quot;vorname&quot; werden im &quot;affix&quot;-Named-Graphen als subPropertyOf &quot;rdfs:label&quot; deklariert.</p>
+<p>UML-technisch h&#228;ngt ein String-Literal &#252;ber eine Beziehung {&quot;Property&quot;} &quot;<tt>name</tt>&quot; bzw. &quot;<tt>vorname</tt>&quot; an Personen. Die Beziehungen &quot;<tt>name</tt>&quot; und &quot;<tt>vorname</tt>&quot; werden im &quot;<tt>affix</tt>&quot;-Named-Graphen als <tt>subPropertyOf</tt> &quot;<tt>rdfs:label</tt>&quot; deklariert.</p>
 <h4 id="wohnort">Wohnort</h4>
 <p>Von einer b&#252;rgerlichen Person soll man wissen, wann sie wo offiziell gewohnt hat.</p>
-<p>Der Datentyp von Wohnort ist eigentlich eine Adresse {kein Postfach}, das in der Rolle eines Wohnorts zu einer Person steht.</p>
+<p>Der Datentyp von <tt>Wohnort</tt> ist eigentlich eine Adresse {kein Postfach}, das in der Rolle eines Wohnorts zu einer Person steht.</p>
 <p>Strasse und Hausnummer fehlen im aktuellen KRDB-Modell.</p>
 <!-- eigentlich sollte die "Wohnort"-Klasse in "Adresse" umbenannt werden.  Die Wohnort-Rolle der Beziehung bleibt.  Die G&#252;ltigkeits-Zeitspanne kommt dann an die Beziehung -->
 
@@ -252,11 +256,11 @@ Die folgende SPARQL-Abfrage listet alle Personen auf, die irgendwann einmal als 
 <p>Die Instanzen dieser Angaben sind durch Objektifizierung von String-Attributen des urspr&#252;nglichen Datenbestandes entstanden. Dort wurden sie gr&#246;&#223;tenteils treu von den Originalquellen (&quot;offiziellen&quot; Publikationen Regierungsetats, Staatskalender und Kantonsratslisten) &#252;bernommen und bisher nicht mit heutigen &quot;offiziellen&quot; Listen abgeglichen. Auch Schreibweisen-Variationen von Dingen, die eigentlich das Gleiche bedeuten, sind bisher noch nicht zusammengezogen.</p>
 <p>Auch diese durch Objektifizierung entstandenen Klassen enthalten den Klassen-Namen im Prefix des Identifiers: ...<tt>/10/res/${klassen_name}/</tt>, z.B. ...<tt>/10/res/beruf/&#214;nologin</tt></p>
 <h5 id="&#252;bung-4">&#220;bung</h5>
-<p>F&#252;hren Sie noch einmal die im Abschnitt 'Identifier-&quot;Syntax&quot;' angegebene SPARQL-Abfrage durch. Ersetzen Sie den dort konkret angegebenen Personen-Identifier durch die Variable &quot;?person&quot;. Evtl. k&#246;nnen Sie an die Abfrage ein &quot;ORDER BY ?person&quot; anh&#228;ngen, um die Ergebnisse nach Personen-ID zu sortieren.</p>
+<p>F&#252;hren Sie noch einmal die im Abschnitt 'Identifier-&quot;Syntax&quot;' angegebene SPARQL-Abfrage durch. Ersetzen Sie den dort konkret angegebenen Personen-Identifier durch die Variable &quot;?person&quot;. Evtl. k&#246;nnen Sie an die Abfrage ein &quot;<tt>ORDER BY ?person</tt>&quot; anh&#228;ngen, um die Ergebnisse nach Personen-ID zu sortieren.</p>
 <h2 id="nicht-fachliche-aspekte">Nicht-fachliche Aspekte</h2>
 <p><img style="uml_diagram" src="classdiagram_10_00.svg" alt="KRDB-Klassen-Modell in UML-Form" width="100%" /></p>
 <h3 id="literatur--und-quellen-nachweise">Literatur- und Quellen-Nachweise</h3>
-<p>F&#252;r die beiden Entit&#228;ten &quot;Einsitz&quot; und &quot;Person&quot; werden Herkunfts-Angaben {&quot;*quelle&quot;} gepflegt. Sie sind in den links unten hinzugekommenen Modell-Sektionen zu sehen.</p>
+<p>F&#252;r die beiden Entit&#228;ten &quot;<tt>Einsitz</tt>&quot; und &quot;<tt>Person</tt>&quot; werden Herkunfts-Angaben {&quot;<tt>*quelle</tt>&quot;} gepflegt. Sie sind in den links unten hinzugekommenen Modell-Sektionen zu sehen.</p>
 <p>In Anlehnung an die Strukturen von &quot;<a href="http://dcevents.dublincore.org/IntConf/dc-2013/paper/viewFile/197/120">Prov-O</a>&quot; betrachten wir Modell-Elemente als das Ergebnis einer Erzeugungs-Aktivit&#228;t. Dh. man geht davon aus, dass ein [meistens menschlicher] Aktor im Rahmen eines Erzeugungs-Prozesses ein Modell-Element unter Hinzuziehung von Quell-Material hervorgebracht hat. Eine solche Aktivit&#228;t {&quot;<tt>Einsitz_generation_activity</tt>&quot;, &quot;<tt>Person_generation_activity</tt>&quot;} bezieht sich auf das, was erzeugt wurde {&quot;<tt>Einsitz</tt>&quot;, &quot;<tt>Person</tt>&quot;}. Sie nennt ausserdem die hinzugezogene Quelle. Typischerweise sagen Erzeugungs-Aktivit&#228;ten auch, wann sie begonnen und beendet wurden. Entsprechende Angaben fehlen in unserem Modell.</p>
 <p>Im UML-Modell finden sich die entsprechenden Klassen links unten.</p>
 <p>Im Identifier-Prefix enthalten die Aktivit&#228;ten den Teil-String &quot;<tt>prov</tt>&quot;. Sie werden in einem Named-Graphen mit dem Teil-String &quot;<tt>meta</tt>&quot; im Identifier abgelegt.</p>

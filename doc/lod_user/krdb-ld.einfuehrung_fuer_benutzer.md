@@ -284,6 +284,7 @@ WHERE \
 &nbsp;&nbsp;} \
 } \
 </tt>](https://test.lindas-data.ch:8443/zhkrdb#!/query/select%09*%0Awhere%0A{%09%0A%09graph%09%3Chttps%3A%2F%2Flinked.opendata.swiss%2Fgraph%2Fzhkrdb%2Fld%2F10%2Fcopula%2Fperson%3E%09%0A%09{%09%0A%20%20%20%09%09%3Fs%20%3Chttps%3A%2F%2Fke.ji.zh.ch%2Fkrdb%2Fld%2F10%2Frelatio%2Fomnes%2Feq_real_gnd%3E%20%20%3Fo%20.%0A%20%20%20%20}%09%0A}%0A)
+</blockquote>
 
 
 ### Federated Queries
@@ -299,6 +300,7 @@ FROM \<mybooks.rdf\> \
 &nbsp;&nbsp;&nbsp;&nbsp;{ ?s dc:title ?title . ?s dc:creator ?a } \
 }</tt>
 </blockquote>
+
 
 ### Theorie-Alignment
 
@@ -351,7 +353,7 @@ Die zweite essentielle Entität ist die Person.  Das Kantonsrats-Modell zeichnet
 
 Die Menge an hier so beschriebenen Personen-Instanzen umfasst bisher Menschen, die irgendwann einmal Mitglied eines Zürcher Rates waren sowie deren Ehepartner.  Es spräche aber nichts dagegen, eine Personen-"Liste" in Anspruch zu nehmen, die umfassender, also nicht auf Ratsmitglieder beschränkt ist.
 
-Gewissermassen ist "Person" eine abstrakte Klasse, da sie eine geschlechtslose Person modelliert.  Davon gibt es typischerweise keine Instanzen.
+Gewissermassen ist "<tt>Person</tt>" eine abstrakte Klasse, da sie eine geschlechtslose Person modelliert.  Davon gibt es typischerweise keine Instanzen.
 
 Das Geschlecht einer Person ist als entsprechende Subklasse von Person modelliert:
 
@@ -361,9 +363,9 @@ Das Geschlecht einer Person ist als entsprechende Subklasse von Person modellier
 
 #### Beziehungen
 
-Bereits in obigem UML-Diagramm sehen wir die einfachen Beziehungen, die "Person" zu ihren Attributen hat {Wohnort, Beruf, ...}.  Diese Beziehungen werden weiter unten kurz erläutert.
+Bereits in obigem UML-Diagramm sehen wir die einfachen Beziehungen, die "<tt>Person</tt>" zu ihren Attributen hat {<tt>Wohnort</tt>, <tt>Beruf</tt>, ...}.  Diese Beziehungen werden weiter unten kurz erläutert.
 
-Die wichtigen Beziehungen in unserem Modell sind aber in Wirklichkeit komplexer als wir sie in obigem UML-Diagramm dargestellt haben.  Sie tragen vielmehr als Nutzlast ein kleines Modell, das die Art der Beziehung im Detail beschreibt.  Ein Mittel, diese Nutzlast an eine Beziehung zu hängen, ist, die direkte Kante durch eine Assoziationsklasse zu unterbrechen, an der dieses kleine Beziehungs-Modell hängt.  In unserem Fall lauten diese Assoziationsklassen "Einsitz", "Bindung" und "Zivilstand":
+Die wichtigen Beziehungen in unserem Modell sind aber in Wirklichkeit komplexer als wir sie in obigem UML-Diagramm dargestellt haben.  Sie tragen vielmehr als Nutzlast ein kleines Modell, das die Art der Beziehung im Detail beschreibt.  Ein Mittel, diese Nutzlast an eine Beziehung zu hängen, ist, die direkte Kante durch eine Assoziationsklasse zu unterbrechen, an der dieses kleine Beziehungs-Modell hängt.  In unserem Fall lauten diese Assoziationsklassen "<tt>Einsitz</tt>", "<tt>Bindung</tt>" und "<tt>Zivilstand</tt>":
 
 <img style="uml_diagram" src="classdiagram_10_02.svg" alt="KRDB-Klassen-Modell in UML-Form" width="100%" />
 
@@ -372,23 +374,23 @@ Die wichtigen Beziehungen in unserem Modell sind aber in Wirklichkeit komplexer 
 
 Die zentrale Beziehung des Modells ist die der Mitgliedschaft, die beschreibt, welche Personen dem Rat während welcher Zeitspannen angehört haben.  Eine Person steht also in der Rolle eines Mitglieds in Beziehung zum Rat.
 
-An dieser Beziehung hängt über die Assoziationsklasse "Einsitz" als "Nutzlast" ein kleines Modell, das den Charakter der Mitgliedschaft genauer beschreibt:
+An dieser Beziehung hängt über die Assoziationsklasse "<tt>Einsitz</tt>" als "Nutzlast" ein kleines Modell, das den Charakter der Mitgliedschaft genauer beschreibt:
 
-* ausser der einfachen Mitgliedschaft, gibt es Unterarten {"Funktion"}, die speziellere Rollen beschreiben, z.B. verschiedene Arten von Präsident-schaft.
-* die Mitgliedschaft ist fallweise einer politischen Interessensvertretung (Partei, Fraktion) zugeordnet
-* die Mitgliedschaft ist einem Wahlkreis zugeordnet
+* ausser der einfachen Mitgliedschaft, gibt es Unterarten {"<tt>Funktion</tt>"}, die speziellere Rollen beschreiben, z.B. verschiedene Arten von Präsident-schaft.
+* die Mitgliedschaft ist fallweise einer politischen Interessensvertretung (<tt>Partei</tt>, <tt>Fraktion</tt>) zugeordnet
+* die Mitgliedschaft ist einem <tt>Wahlkreis</tt> zugeordnet
 
 
 ##### Person in der Rolle der Gebundenheit an die Interessen einer Institution
 
 Um mögliche Interessenskonflikte, in denen ein Ratsmitglied stehen könnte, transparenter zu machen, werden Institutionen modelliert, die an eine Person Erwartungen an sein Verhalten haben könnten.  Z.B. sind das wirtschaftliche Verpflichtungen, die eine Person -- insbesondere ein Ratsmitglied -- gegenüber einer Institution haben kann, von der er Geld erhält, z.B. Unternehmensbeteiligungen.
 
-Seit Beginn des Jahrhunderts ist die Transparenz sogar als Offenlegungspflicht für Interessensbindungen gesetzlich festgeschrieben, im Kt. ZH zB im [Kantonsratsgesetz LS 171.1 . 5a](http://www2.zhlex.zh.ch/Appl/zhlex_r.nsf/0/08C56C56E70A348AC12581F4002999EC/$file/171.1_5.4.81_99.pdf), ebenso für den [Regierungsrat \(RRB 2017/112\)](https://www.zh.ch/bin/ktzh/rrb/beschluss.pdf?rrbNr=112&name=RRB-2017-112&year=2017&_charset_=UTF-8). Zumindestens die polit. Bindungen wurden hier in der KRDB auch fallweise auch für ältere Mitglieder erhoben, z.B. "Gemeinderat Meilen - Präsident, von-bis"...
+Seit Beginn dieses Jahrhunderts ist die Transparenz sogar als Offenlegungspflicht für Interessensbindungen gesetzlich festgeschrieben, im Kt. ZH zB im [Kantonsratsgesetz LS 171.1 . 5a](http://www2.zhlex.zh.ch/Appl/zhlex_r.nsf/0/08C56C56E70A348AC12581F4002999EC/$file/171.1_5.4.81_99.pdf), ebenso für den [Regierungsrat \(RRB 2017/112\)](https://www.zh.ch/bin/ktzh/rrb/beschluss.pdf?rrbNr=112&name=RRB-2017-112&year=2017&_charset_=UTF-8). Zumindestens die polit. Bindungen wurden hier in der KRDB auch fallweise auch für ältere Mitglieder erhoben, z.B. "Gemeinderat Meilen - Präsident, von-bis"...
 
 
 ##### Person in der Rolle als Zivilstands-Partner
 
-Interessenskonflikte können sich aber nicht nur durch wirtschaftliche Beziehungen ergeben.  Auch soziale Bindungen eines Rates können sein Verhalten beeinflussen.  Die herausragende aktenkundige soziale Beziehung ist die eheliche Beziehung zu einem Partner.  Diese Beziehung ist durch den Zivilstand modelliert.
+Interessenskonflikte können sich aber nicht nur durch wirtschaftliche Beziehungen ergeben.  Auch soziale Bindungen eines Rates können sein Verhalten beeinflussen.  Die herausragende aktenkundige soziale Beziehung ist die eheliche Beziehung zu einem Partner.  Diese Beziehung ist durch den <tt>Zivilstand</tt> modelliert.
 
 
 ## Die Modell-Elemente im Detail
@@ -399,7 +401,7 @@ Bisher haben wir das Kern-Skelett des Modells skizziert.  Das komplette fachlich
 
 Insbesondere zeigt es, dass die meisten Modell-Sachverhalte nur während bestimmter Zeit-Intervalle gültig waren.  Das UML-Modell oben stellt dies als Zeit-Intervall-Klasse {ganz oben} dar.  Im KRDB-Modell sind Zeitintervalle aber nicht errerbt, sondern "inline" in den jeweiligen Entitäten selbst enthalten.
 
-Ausserdem sind nun die möglichen Werte Spezialisierungen für "Funktion" und Zivilstand ausmodelliert. 
+Ausserdem sind nun die möglichen Werte Spezialisierungen für "<tt>Funktion</tt>" und "<tt>Zivilstand</tt>" ausmodelliert. 
 
 
 ### Die Haupt-Beziehungen im Modell
@@ -411,7 +413,7 @@ Von der Person zu unterscheiden sind die Rollen, in denen eine Person in einer S
 
 Der genauere Charakter der Mitgliedschaft einer Person in einem Rat ist von mehreren "Parametern" geprägt.  Es ist üblich, solche reichhaltigen Beziehungen sozusagen zu verdinglichen.  Man unterbricht dabei die Beziehung durch einen Knoten, der die ganze Nutzlast der Characteristica der Beziehung trägt.  Einen solchen Zwischen-Knoten nennt man Assoziations-Klasse.
 
-Die Assoziationsklasse, die die Characteristica der Mitgliedschaft einer Person in einem Rat trägt, heisst in unserem Modell "Einsitz".
+Die Assoziationsklasse, die die Characteristica der Mitgliedschaft einer Person in einem Rat trägt, heisst in unserem Modell "<tt>Einsitz</tt>".
 
 ##### Funktion
 
@@ -419,11 +421,11 @@ Normalerweise ist eine Person während eines Einsitzes in einem Rat einfaches Mi
 
 Sie kann aber während bestimmter Perioden eine spezieller Art der Mitgliedschaft bekleiden, z.B. als Rats-Präsident.  Im UML-Diagramm oben sind diese Unterarten als Subklassen von "Funktion" dargestellt.  Im RDF-Modell sind die Unterarten als Sub-Properties der allgemeinen Mitglieds-Property modelliert.  
 
-##### Partei-Association
+##### ParteiAssociation
 
 Eine Person kann während eines Einsitzes zu bestimmten Perioden als Vertreter einer Partei und als Vertreter einer Fraktion Mitglied des Rates sein.
 
-"Partei-Association" ist eine Assoziationsklasse, die die Beziehung von Einsitz zu Partei und Fraktion genauer beschreibt.
+"<tt>ParteiAssociation</tt>" ist eine Assoziationsklasse, die die Beziehung von <tt>Einsitz</tt> zu <tt>Partei</tt> und <tt>Fraktion</tt> genauer beschreibt.
 
 
 ##### Partei
@@ -442,7 +444,7 @@ Im gegebenen Modell hat diese Entität keine weitere Struktur.
 
 ##### Wahlkreis
 
-Diese Angabe ist der Wahlkreis, als Vertreter dessen ein Mitglied in einem Rat einsitzt.
+Diese Angabe ist der <tt>Wahlkreis</tt>, als Vertreter dessen ein Mitglied in einem Rat einsitzt.
 
 ###### Übung
 
@@ -486,7 +488,7 @@ WHERE \
 
 Eine Person, die Ratsmitglied ist, steht üblicherweise nicht isoliert in der Gesellschaft, sondern hat weitere Beziehungen zu anderen Personen und Institutionen.  Die Kantonsratsdatenbank modelliert die Beziehung zwischen Institutionen und Personen um transparent zu machen, welche anderen, ausser Partei- und Fraktions-Interessen eine Rats-Mitglieds-Person möglicherweise verfolgt.
 
-"Bindung" ist eine Assoziationsklasse, auf der Beziehung zwischen Institutionen und Personen.  Die Art der Bindung ist durch die Angabe der Bindungskategorie parametriert, die die spezielle Art der Bindung zwischen einer Person und einer Institution ausdrückt.  Der einzige Wert, der momentan im Datenbestand vorkommt, ist "politisches Amt".
+"<tt>Bindung</tt>" ist eine Assoziationsklasse, auf der Beziehung zwischen Institutionen und Personen.  Die Art der Bindung ist durch die Angabe der Bindungskategorie parametriert, die die spezielle Art der Bindung zwischen einer Person und einer Institution ausdrückt.  Der einzige Wert, der momentan im Datenbestand vorkommt, ist "politisches Amt".
 
 
 #### Zivilstand
@@ -504,14 +506,14 @@ Mit dem "neuen" KRDB-LD-Modell könnten auch [Interessens-]Bindungen von Ehe-Par
 
 Name und Vorname sind zwei spezielle Labels mit denen man über eine Person spricht.
 
-UML-technisch hängt ein String-Literal über eine Beziehung {"Property"} "name" bzw. "vorname" an Personen.  Die Beziehungen "name" und "vorname" werden im "affix"-Named-Graphen als subPropertyOf "rdfs:label" deklariert.
+UML-technisch hängt ein String-Literal über eine Beziehung {"Property"} "<tt>name</tt>" bzw. "<tt>vorname</tt>" an Personen.  Die Beziehungen "<tt>name</tt>" und "<tt>vorname</tt>" werden im "<tt>affix</tt>"-Named-Graphen als <tt>subPropertyOf</tt> "<tt>rdfs:label</tt>" deklariert.
 
 
 #### Wohnort
 
 Von einer bürgerlichen Person soll man wissen, wann sie wo offiziell gewohnt hat.
 
-Der Datentyp von Wohnort ist eigentlich eine Adresse {kein Postfach}, das in der Rolle eines Wohnorts zu einer Person steht.  
+Der Datentyp von <tt>Wohnort</tt> ist eigentlich eine Adresse {kein Postfach}, das in der Rolle eines Wohnorts zu einer Person steht.  
 
 Strasse und Hausnummer fehlen im aktuellen KRDB-Modell.
 
@@ -535,7 +537,7 @@ Auch diese durch Objektifizierung entstandenen Klassen enthalten den Klassen-Nam
 
 ##### Übung
 
-Führen Sie noch einmal die im Abschnitt 'Identifier-"Syntax"' angegebene SPARQL-Abfrage durch.  Ersetzen Sie den dort konkret angegebenen Personen-Identifier durch die Variable "?person".  Evtl. können Sie an die Abfrage ein "ORDER BY ?person" anhängen, um die Ergebnisse nach Personen-ID zu sortieren.
+Führen Sie noch einmal die im Abschnitt 'Identifier-"Syntax"' angegebene SPARQL-Abfrage durch.  Ersetzen Sie den dort konkret angegebenen Personen-Identifier durch die Variable "?person".  Evtl. können Sie an die Abfrage ein "<tt>ORDER BY ?person</tt>" anhängen, um die Ergebnisse nach Personen-ID zu sortieren.
 
 
 ## Nicht-fachliche Aspekte
@@ -545,7 +547,7 @@ Führen Sie noch einmal die im Abschnitt 'Identifier-"Syntax"' angegebene SPARQL
 
 ### Literatur- und Quellen-Nachweise
 
-Für die beiden Entitäten "Einsitz" und "Person" werden Herkunfts-Angaben {"*quelle"} gepflegt.  Sie sind in den links unten hinzugekommenen Modell-Sektionen zu sehen.
+Für die beiden Entitäten "<tt>Einsitz</tt>" und "<tt>Person</tt>" werden Herkunfts-Angaben {"<tt>*quelle</tt>"} gepflegt.  Sie sind in den links unten hinzugekommenen Modell-Sektionen zu sehen.
 
 In Anlehnung an die Strukturen von "[Prov-O](http://dcevents.dublincore.org/IntConf/dc-2013/paper/viewFile/197/120)" betrachten wir Modell-Elemente als das Ergebnis einer Erzeugungs-Aktivität.  Dh. man geht davon aus, dass ein [meistens menschlicher] Aktor im Rahmen eines Erzeugungs-Prozesses ein Modell-Element unter Hinzuziehung von Quell-Material hervorgebracht hat.  Eine solche Aktivität {"<tt>Einsitz\_generation\_activity</tt>", "<tt>Person\_generation\_activity</tt>"} bezieht sich auf das, was erzeugt wurde {"<tt>Einsitz</tt>", "<tt>Person</tt>"}.  Sie nennt ausserdem die hinzugezogene Quelle.  Typischerweise sagen Erzeugungs-Aktivitäten auch, wann sie begonnen und beendet wurden.  Entsprechende Angaben fehlen in unserem Modell.
 
