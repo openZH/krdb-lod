@@ -1,0 +1,35 @@
+### reasoning sollte eingeschaltet sein, sonst bekommt man nur Resultate von Personen ohne Geschlecht {das sind ziemlich wenige}
+#
+## das waere die eigentliche Abfrage:
+#select ?person
+## so sieht man besser, was alles "dranhaengt:
+select *
+where
+{ 
+ 
+  { 
+    graph ?g0 
+          { 
+            ?person rdf:type kr_10_genus:Person .
+            ?person kr_10_rel:wohnort ?wohnort .
+            ?person ?p0 ?o0 .
+          } 
+    graph ?g1
+          { 
+            ?wohnort kr_10_rel:gemeindename ?wohnort_bezeichnung .
+            filter( strstarts( str(?wohnort_bezeichnung), "Winterthur" ) )
+          } 
+    graph ?g2
+          { 
+            ?einsitz kr_10_rel:person ?person .
+            ?einsitz rdf:type kr_10_genus:Einsitz .
+            ?einsitz kr_10_rel:funktion ?funktion .
+          } 
+    graph ?g3
+          { 
+            ?funktion rdf:type kr_10_genus:Funktion__Präsidium .
+            ?funktion ?p1 ?o1 .
+          } 
+  } 
+}
+ORDER BY ?wohnort_bezeichnung
