@@ -1,0 +1,6 @@
+# consider some preprocessing, if you have charset problems:
+#cat krdb-ld.einfuehrung_fuer_benutzer.md | sed 's#\xd6#Ö#g;s#\xe4#ä#g;s#\xf6#ö#g;s#\xfc#ü#g;s#\xdc#Ü#g;s#\xdf#ß#g;s#\xe9#e#g' > krdb-ld.einfuehrung_fuer_benutzer.md.utf8
+# mv krdb-ld.einfuehrung_fuer_benutzer.md.utf8  krdb-ld.einfuehrung_fuer_benutzer.md
+
+pandoc --from=markdown --to=html --ascii krdb-ld.einfuehrung_fuer_benutzer.md > krdb-ld.einfuehrung_fuer_benutzer.html
+

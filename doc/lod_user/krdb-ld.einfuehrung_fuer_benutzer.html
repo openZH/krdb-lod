@@ -1,0 +1,326 @@
+<h1 id="rdf-modell-der-z&#252;rcher-kantonsratsdatenbank">RDF-Modell der Z&#252;rcher Kantonsratsdatenbank</h1>
+<h2 id="thema">Thema</h2>
+<p><a href="https://wahlen-abstimmungen.zh.ch/internet/justiz_inneres/wahlen-abstimmungen/de/wahlen/krdaten_staatsarchiv.html">Die Z&#252;rcher Kantonsratsdatenbank</a> modelliert die personelle Zusammensetzung der Z&#252;rcher Legislative (Grosser Rat / Kantonsrat) und Exekutive (Kleiner Rat / Regierungsrat) im zeitlichen Verlauf seit 1803. &quot;Im zeitlichen Verlauf&quot; heisst, dass alle wichtigen Modell-Elemente mit einer Zeitspanne parametriert sind, die den G&#252;ltigkeitsbereich der Existenz bzw. Aussage pr&#228;zisiert.</p>
+<p>In seiner jetzigen Form fokussiert sich das Modell auf die Zusammensetzung des jeweiligen Rates. Der Vorgang, durch den diese Zusammensetzung zustandekommt, z.B. eine Wahl, wird nicht modelliert.</p>
+<h2 id="herkunft">Herkunft</h2>
+<p>Um die Integration der Kantonsratsdatenbank mit anderen offenen Daten zu erleichtern, wurde die KRDB ins <a href="https://www.w3.org/TR/rdf11-primer/">RDF</a>-Format konvertiert, <a href="http://dbis.informatik.uni-freiburg.de/lehre/WS1011/Spezialvorlesung/Webbasierte+Informationssysteme/folien.html">dessen &#214;kosystem</a> besonders geeignet ist,</p>
+<ul>
+<li>Bedeutung greifbar zu machen</li>
+<li>verteilte Daten {eigentlich besser: verteiltes Wissen} zu integrieren</li>
+</ul>
+<p>.</p>
+<p>Das RDF-Modell der Z&#252;rcher Kantonsratsdatenbank ist entstanden aus einer Konvertierung der relationalen Kantonsratsdatenbank auf dem &quot;Umweg&quot; &#252;ber einen <a href="https://www.web.statistik.zh.ch:8443/KRRR/app?show_page=EXCEL&amp;operation=EXCEL">xlsx-Export</a> und csv.</p>
+<p>Im ersten Schritt wurde eine 1:1-Konvertierung vorgenommen:</p>
+<ul>
+<li>jeder Tabelle entspricht eine Klasse</li>
+<li>jeder Tabellenzeile entspricht eine Instanz dieser Klasse</li>
+<li>jeder Zelle in einer Zeile entspricht ein Objekt, auf das durch die Beziehung {Property}, die durch den Spaltennamen gegeben ist, verwiesen wird.</li>
+</ul>
+<p>Im zweiten Schritt dieser Konvertierung wurden</p>
+<ul>
+<li>implizite Entit&#228;ten explizit gemacht ( = verdinglicht, objektifiziert, reifiziert)</li>
+<li>Beziehungen explizit gemacht, die vorher nur als Foreign-Key-&quot;Matches&quot; vorlagen</li>
+<li>implizite Typen als Sub-Typen dargestellt (Funktion, Zivilstand, Geschlecht)</li>
+</ul>
+<p>Die Ergebnisse beider Schritte sind auf dem Triplestore verf&#252;gbar.</p>
+<ul>
+<li>das Ergebnis des ersten Schritts wird als Reifegrad &quot;00&quot; bezeichnet</li>
+<li>das Ergebnis des zweiten Schritts wird als Reifegrand &quot;10&quot; bezeichnet.</li>
+</ul>
+<h2 id="entwurfsprinzipien">Entwurfsprinzipien</h2>
+<p>Bevor im n&#228;chsten Abschnitt das Modell vorgestellt wird, erl&#228;utern wir zun&#228;chst einige Design-Entscheidungen, da mit ihrer Hilfe das Verst&#228;ndnis f&#252;r die Gestalt des Modells deutlich erleichtert wird. Wer m&#246;chte, kann diesen Abschnitt &#252;berspringen und sp&#228;ter bei Bedarf zur&#252;ckkehren.</p>
+<h3 id="trennung-der-meta-ebenen">Trennung der Meta-Ebenen</h3>
+<p>Das wichtigste Modularisierungs-Kriterium ist die Trennung der Meta-Ebenen. Das Wort &quot;Meta&quot; wird dabei im speziellen Sinn der Meta-Modellierung verwendet, wie wir das von der <a href="https://www.omg.org/mof/">Meta Object Facility der OMG</a> kennen {siehe z.B. Folie 6 in <a href="st.inf.tu-dresden.de/files/teaching/ss11/cbse/slides/02-metamodelling.pdf">Uwe Assmann: Metamodelling and Metaprogramming</a>}.</p>
+<p>Auch wenn uns die technologische Basis des RDF-Oekosystems nicht dazu zwingt, bleibt es eine gute Idee, <a href="https://flylib.com/books/en/1.508.1.61/1/">Modell-Meta-Ebenen</a> getrennt zu halten.</p>
+<p>Die beiden wichtigsten Meta-Ebenen sind</p>
+<ul>
+<li>die Instanz-Ebene {die grosse Masse der konkreten Dinge}</li>
+<li>die Klassen- bzw. Schema- Ebene, auf der Repr&#228;sentanten gleich<em>artig</em>er Instanz-Dinge &quot;leben&quot;.</li>
+</ul>
+<h3 id="modularisierung">Modularisierung</h3>
+<p>Als Modularisierungs-Mittel dienen Namespace-Prefices, wie man sie von XML kennt und sogenannte &quot;Named-Graph&quot;en. Die einzelnen Teil-Modelle werden in separate Named-Graphen abgelegt.</p>
+<h4 id="identifier-syntax">Identifier-&quot;Syntax&quot;</h4>
+<p>Identifier werden systematisch konstruiert und einmalig bei der Entstehung des jeweiligen Modell-Elements vergeben. Diese Systematik hat globale Eindeutigkeit zum Ziel.</p>
+<p>In der RDF-Welt ist es &#252;blich, globale Eindeutigkeit von Identifiern dadurch zu erreichen, dass man Eindeutigkeit separat in einem vorangestellten globalen und einem angeh&#228;ngten lokalen Teil des Identifier-Strings gew&#228;hrleistet.</p>
+<p>Zur globalen Eindeutigkeit setzt man auf die Strukturen des ICANN-gemanageten DNS-Namensraums auf [und kehrt unter den Teppich, dass auch DNS-Dom&#228;nen nicht ewig gelten...].</p>
+<p>Wer eine DNS-Dom&#228;ne gebucht hat, hat darunter die Hoheit &#252;ber eine Namensraum-Hierarchie seiner Wahl.</p>
+<p>Wir haben uns hier vorl&#228;ufig f&#252;r <tt>https://ke.ji.zh.ch</tt> als K&#252;rzel f&#252;r &quot;Knowledge-Engineering&quot; unterhalb von &quot;Justiz und Inneres&quot; unterhalb von &quot;Z&#252;rich&quot; in der Schweiz entschieden.</p>
+<p>Unter dieser Sub-Domain geht es mit &quot;krdbld/${reifegrad}/${meta}/${klasse}&quot; weiter.</p>
+<p>Die Werte f&#252;r &quot;reifegrad&quot; sind bisher</p>
+<ul>
+<li>&quot;<tt>00</tt>&quot; f&#252;r das Ergebnis der 1:1-Konvertierung der relationalen KRDB</li>
+<li>&quot;<tt>10</tt>&quot; f&#252;r das Ergebnis der ersten semantischen Modell-zu-Modell-Transformation .</li>
+</ul>
+<p>F&#252;r &quot;meta&quot; lauten die Werte:</p>
+<ul>
+<li>&quot;<tt>res</tt>&quot; f&#252;r die Instanz-Ebene</li>
+<li>&quot;<tt>genus</tt>&quot; f&#252;r Klassen</li>
+<li>&quot;<tt>rel</tt>&quot; f&#252;r Relationen|Beziehungen|Properties auf Klassen-Ebene</li>
+<li>&quot;<tt>meta</tt>&quot; f&#252;r andere Aussagen <em>&#252;ber</em> Instanzen, die nicht Struktur-Aussagen {&quot;Meta-Modell&quot;} sind</li>
+<li>&quot;<tt>prov</tt>&quot; f&#252;r Herkunfts-Aussagen</li>
+<li>&quot;<tt>copula</tt>&quot; f&#252;r Ontologie-Mapping-Aussagen</li>
+<li>&quot;<tt>affix</tt>&quot; f&#252;r Aussagen, wie eigene Modell-Elemente zu externen Modell-Elementen in Beziehung stehen {typischerweise Subsumption externer Dinglichkeiten}</li>
+</ul>
+<p>&quot;klasse&quot; nennt bei Instanzen deren [Haupt-]Typ, auf Klassen-|Typ-|Schema-Ebene ist der einzige Wert &quot;omnes&quot;.</p>
+<h5 id="beispiele">Beispiele</h5>
+<h6 id="die-personen-instanz-httpske.ji.zh.chkrdbld10resperson10003">Die Personen-Instanz <tt>&lt;https://ke.ji.zh.ch/krdb/ld/10/res/person/10003&gt;</tt></h6>
+<p>&quot;<tt>https://ke.ji.zh.ch/</tt>&quot; spezifiziert den Verantwortungsbereich.<br />Top-down, von hinten nach vorn gelesen, wie bei DNS-Namen &#252;blich:<br />&quot;<tt>ch</tt>&quot; ist die Top-Level-Domain der Schweiz,<br />&quot;<tt>zh</tt>&quot; als Second-Level-DNS-Domain ist vom Kanton Z&#252;rich registriert,<br />&quot;<tt>ji</tt>&quot; steht darunter f&#252;r &quot;Justiz und Inneres&quot; und<br />&quot;<tt>ke</tt>&quot; f&#252;r das Thema &quot;Knowledge Engineering&quot;</p>
+<p>&quot;<tt>krdb</tt>&quot; steht f&#252;r das Thema &quot;Kantonsrats-Datenbank&quot;<br />&quot;<tt>ld</tt>&quot; steht f&#252;r die Linked-Data-Version der KRDB<br />&quot;<tt>10</tt>&quot; steht f&#252;r die in ein assoziations-klassen-basiertes Dom&#228;nen-Modell konvertierte Variante der LD-KRDB<br />&quot;<tt>res</tt>&quot; umfasst die Instanz-Ebene des Modells<br />&quot;<tt>person</tt>&quot; umfasst die Instanzen der Klasse &quot;Person&quot;<br />&quot;<tt>10003</tt>&quot; ist der lokale Identifier der Personen-Instanz {Emil Strehler-Hess}</p>
+<h6 id="&#252;bung">&#220;bung</h6>
+Lassen Sie sich mit der SPARQL-Abfrage<br />
+<blockquote>
+<a href="https://test.lindas-data.ch:8443/zhkrdb#!/query/SELECT%20%3Fp%20%3Fo%0AWHERE%0A{%0A%20%20GRAPH%20%3Fg%20%0A%20%20{%0A%20%20%20%20%3Chttps%3A%2F%2Fke.ji.zh.ch%2Fkrdb%2Fld%2F10%2Fres%2Fperson%2F10003%3E%20%3Fp%20%3Fo%20.%0A%20%20}%0A}"><tt>SELECT ?p ?o<br />WHERE<br />{<br />&#160;&#160;GRAPH ?g<br />&#160;&#160;{<br />&#160;&#160;&#160;&#160;&lt;https://ke.ji.zh.ch/krdb/ld/10/res/person/10003&gt; ?p ?o .<br />&#160;&#160;}<br /></tt>}</a><br />
+</blockquote>
+<p>alle Attribute der Personen-Instanz mit de Emil Strehler-Hess anzeigen.</p>
+<h6 id="die-buergerort-klasse-httpske.ji.zh.chkrdbld10genusomnesbuergerort">Die Buergerort-Klasse <tt>&lt;https://ke.ji.zh.ch/krdb/ld/10/genus/omnes/Buergerort&gt;</tt></h6>
+<p>&quot;<tt>genus</tt>&quot; steht f&#252;r die Klassen auf Schema-Ebene des Modells<br />&quot;<tt>omnes</tt>&quot; ist der einzige g&#252;ltige Wert f&#252;r Klassen. Selbstverst&#228;ndlich ist es nicht sinnvoll, auf Schema-Ebene den Bestand weiter in Klassen zu zersplittern.<br />&quot;<tt>Buergerort</tt>&quot; ist der lokale Identifier der B&#252;rgerort-Klasse</p>
+<h6 id="die-buergerort-beziehung-httpske.ji.zh.chkrdbld10relatioomnesbuergerort">Die buergerort-Beziehung <tt>&lt;https://ke.ji.zh.ch/krdb/ld/10/relatio/omnes/buergerort&gt;</tt></h6>
+<p>&quot;<tt>relatio</tt>&quot; steht f&#252;r die Beziehungs-Typen auf Schema-Ebene des Modells<br />&quot;<tt>omnes</tt>&quot; ist der einzige g&#252;ltige Wert f&#252;r Beziehungs-Typen. Selbstverst&#228;ndlich ist es nicht sinnvoll, auf Schema-Ebene den Bestand weiter in Beziehungs-Typen zu zersplittern.<br />&quot;<tt>buergerort</tt>&quot; ist der lokale Identifier des buergerort-Beziehungs-Typs</p>
+<h6 id="bemerkungen-zu-den-beiden-vorangegangenen-beispielen">Bemerkungen zu den beiden vorangegangenen Beispielen</h6>
+<p>Es gibt also zwei Modell-Elemente, die &#228;hnlich aussehende IDs haben: die Entit&#228;t <tt>Buergerort</tt> und die Beziehung &quot;<tt>buergerort</tt>&quot;. Selbst wenn sie im gleichen Namensraum l&#228;gen, k&#246;nnte man sie unterscheiden, da Gross- und Klein-Schreibung bei IRIs signifikant sind. Da lokale Identifier von Entit&#228;ten und Beziehungen im Allgemeinen durchaus gleich sein k&#246;nnen k&#246;nnen wir sie aber unterscheiden, da im Namensraum einmal &quot;<tt>relatio</tt>&quot; und einmal &quot;<tt>genus</tt>&quot; vorkommt.</p>
+<h4 id="named-graphen">Named Graphen</h4>
+<p>Named Graphen sind Container, die Mengen von Tripeln zur Laufzeit voneinander getrennt beherbergen. Man nennt Triple-Stores, die dieses Modularisierungs-Mittel anbieten, oft auch Quad-Stores, da die Zugeh&#246;rigkeit eines Tripels zu einem Named-Graphen dadurch implementiert wird, dass man das Tripel mit dem Graphen-Identifier als viertem Element erweitert wird.</p>
+<p>Da LINDAS in diesem Vorhaben die Publikations-Plattform ist, &#252;bernehmen wir deren Graphen-Namens-Konvention:</p>
+<ul>
+<li>Prefix: &quot;<tt>https://linked.opendata.swiss/graph/zhkrdb/ld/</tt>&quot;<br /> Das &quot;<tt>zhkrdb/ld</tt>&quot; wurde mit den LINDAS-Betreibern abgestimmt um Eindeutigkeit zu garantieren und Namensraum-Wildwuchs zu reduzieren</li>
+<li>darunter: &quot;<tt>${reifegrad}/${meta}/${klasse}</tt>&quot;<br /> die Unterteilung unterhalb des Praefices ist den KRDB-LD-Owner ueberlassen. Wir verwenden die gleiche &quot;Hierarchie&quot; wie bei der Identifier-&quot;Syntax&quot;. Beziehung kommen in denjenigen Named-Graphen, in dem auch deren Quell-Entit&#228;t liegt. .</li>
+</ul>
+<h5 id="&#252;bungen">&#220;bungen</h5>
+Lassen Sie sich mit der SPARQL-Abfrage<br />
+<blockquote>
+<a href="https://test.lindas-data.ch:8443/zhkrdb#!/query/SELECT%20DISTINCT%20%3Fg%20%0AWHERE%0A{%20%0A%20%20GRAPH%20%3Fg%20%0A%20%20{%20%0A%20%20%20%20%3Fs%20%3Fp%20%3Fo%20.%0A%20%20}%20%0A}%0A"><tt>SELECT DISTINCT ?g<br />WHERE<br />{<br />&#160;&#160;GRAPH ?g<br />&#160;&#160;{<br />&#160;&#160;&#160;&#160;?s ?p ?o .<br />&#160;&#160;}<br />}</tt></a><br />
+</blockquote>
+<p>alle Named-Graphen anzeigen.</p>
+Lassen Sie sich mit der SPARQL-Abfrage<br />
+<blockquote>
+<a href="https://test.lindas-data.ch:8443/zhkrdb#!/query/SELECT%20*%0AWHERE%20%0A{%20%0A%20%20GRAPH%20%3Chttps%3A%2F%2Flinked.opendata.swiss%2Fgraph%2Fzhkrdb%2Fld%2F10%2Fres%2Frat%3E%20%0A%20%20{%20%0A%09%3Fs%20%3Fp%20%3Fo%20.%0A%20%20}%20%0A}"><tt>SELECT *<br />WHERE<br />{<br />&#160;&#160;GRAPH &lt;https://linked.opendata.swiss/graph/zhkrdb/ld/10/res/rat&gt;<br />&#160;&#160;{<br />&#160;&#160;&#160;&#160;?s ?p ?o .<br />&#160;&#160;}<br />}</tt></a><br />
+</blockquote>
+<p>alle Tripel im Named-Graphen <tt>&lt;https://linked.opendata.swiss/graph/zhkrdb/ld/10/res/rat&gt;</tt> anzeigen.</p>
+<p>Normalerweise werden Tripel in den ihrem Namens-Pr&#228;fices entsprechenden Named-Graphen abgelegt. Hiervon gibt es zwei Ausnahmen:</p>
+<ul>
+<li>auf Klassen-|Typ-|Schema-Ebene werden sowohl Klassen {mit der Meta-Kategorie &quot;<tt>genus</tt>&quot; im Identifier} als auch Relationen im Named-Graphen &quot;<tt>genus</tt>&quot; abgelegt.</li>
+<li>sowohl Herkunfts-Aussagen {&quot;<tt>prov</tt>&quot; im Identifier} als auch andere Meta-Aussagen {&quot;<tt>meta</tt>&quot; im Identifier} werden im Named-Graphen &quot;<tt>meta</tt>&quot; abgelegt.</li>
+</ul>
+<h3 id="separierung-nicht-fachlicher-aspekte">Separierung nicht-fachlicher Aspekte</h3>
+<p>Ein fachliches Modell sollte nichts anderes enthalten, als eine Theorie der fachlichen Dom&#228;ne.</p>
+<p>Enthielte dieses Modell auch Anderes, k&#246;nnte eine Maschine {ein Reasoner z.B.} nicht von sich aus zwischen Fachlichkeit und diesem Anderen unterscheiden.</p>
+<p>Deswegen ist es eine wichtige Strategie, die nicht-fachlichen Belange pro Belang jeweils in einen separates Modul, bei uns: einen separaten Named-Graphen, abzuspalten.</p>
+<h4 id="syntax-und-semantik">Syntax und Semantik</h4>
+<p>Grob kann man sagen: die Syntax {wie kommuniziert man &#252;ber etwas?} steckt in den Strings, die Semantik {was ist es?} in den Bez&#252;gen {also im Graphen}.</p>
+<p>Dies ist bereits im Design von RDF verankert:</p>
+<ul>
+<li>es gibt eine spezielle Beziehung {&quot;Property&quot;} namens &quot;<tt>rdfs:label</tt>&quot;, die von einem semantischen Element {Knoten oder Kante} auf ein String-Literal verweist. Pro semantisches Element k&#246;nnen mehrere solcher &quot;Labels&quot;, z.B. in verschiedenen Sprachen, vorhanden sein.</li>
+<li>[fast, dh. bis auf <tt>comment</tt>s, s.u.] alles andere sind semantische Aussagen &#252;ber das Wesen der modellierten Dinge.</li>
+</ul>
+<p>Auch im Kantonsrats-Modell gibt es viele Klassen, die ein Attribut namens &quot;<tt>*bezeichnung</tt>&quot; tragen. Das ist ein String-Literal, auf das via eine Property namens &quot;<tt>*bezeichnung</tt>&quot; verwiesen wird. All diese &quot;<tt>*bezeichnung</tt>&quot;en sind [im &quot;<tt>affix</tt>&quot;-Named-Graphen deklariert als] &quot;<tt>subPropertyOf</tt>&quot; &quot;<tt>rdfs:label</tt>&quot;.</p>
+<h5 id="&#252;bung-1">&#220;bung</h5>
+Lassen Sie sich mit der SPARQL-Abfrage<br />
+<blockquote>
+<a href="https://test.lindas-data.ch:8443/zhkrdb#!/query/SELECT%20*%0AWHERE%20%0A{%20%0A%20%20GRAPH%20%3Chttps%3A%2F%2Flinked.opendata.swiss%2Fgraph%2Fzhkrdb%2Fld%2F10%2Fgenus%2Fomnes%3E%20%0A%20%20{%20%0A%09%3Fs%20rdfs%3Alabel%20%3Flabel%20.%0A%20%20}%20%0A}"><tt>SELECT *<br />WHERE<br />{<br />&#160;&#160;GRAPH &lt;https://linked.opendata.swiss/graph/zhkrdb/ld/10/genus/omnes&gt;<br />&#160;&#160;{<br />&#160;&#160;&#160;&#160;?s rdfs:label ?label .<br />&#160;&#160;}<br />}</tt></a><br />
+</blockquote>
+<p>alle Labels im Schema-Graphen <tt>&lt;https://linked.opendata.swiss/graph/zhkrdb/ld/10/genus/omnes&gt;</tt> anzeigen.</p>
+<h4 id="herkunft-z.b.-literatur--und-quellen-nachweise">Herkunft (z.B. Literatur- und Quellen-Nachweise)</h4>
+<p>Ein typischer nicht-fachlicher Belang vieler Modelle sind Angaben &#252;ber die Herkunft einzelner Modell-Bestandteile. Dabei werden typischerweise Aussagen gemacht, in welchem Kontext {wann, wo, von wem} ein Modell-Element erzeugt wurde.</p>
+<h4 id="ontologie-mapping">Ontologie-Mapping</h4>
+<p>Wenn wir philosophische Spitzfindigkeiten aussen vor lassen, k&#246;nnen wir sagen: es gibt <em>eine</em> Realit&#228;t und <em>viele</em> Modelle davon. Jedes Modell ist eine stark vereinfachte Perspektive auf die Realit&#228;t.</p>
+<p>Im Allgemeinen entwickeln sich nach Bedarf und unkoordiniert {woher sollten die Modellierer auch vor der Publikation schon voneinander wissen} verschiedene Modelle derselben Dinge der Realit&#228;t.</p>
+<p>Sp&#228;ter erfahren die Modellierer von dem Tatbestand, dass es auch andere Modelle derselben Dinge gibt. Aus diesem Muster hat sich die Disziplin des sogenannten Ontology-Mapping entwickelt. Im Kern repr&#228;sentieren alle Ontology-Mapping-Ans&#228;tze das reale Ding durch einen Knoten im Modell, der als Attribute Verweise auf die anderen Modell-Elemente enth&#228;lt, die das gleiche Real-Ding modellieren.</p>
+<p>Da die verschiedenen Modelle ein und derselben Real-Sache nichts miteinander gemein haben, wird solch ein Mapping-Angel-Punkt typischerweise nur f&#252;r Navigations-Zwecke, aber nicht f&#252;r semantische Zwecke {z.B. zum Inferieren} benutzt.</p>
+<h4 id="dokumentation">Dokumentation</h4>
+<p>Wie in jeder Programmier-Sprache gibt es auch in RDF eine M&#246;glichkeit, das Vorliegende zu dokumentieren. Dies wird durch eine spezielle, vordefinierte Beziehung namens &quot;<tt>rdfs:comment</tt>&quot; ausgedr&#252;ckt.<br />Obwohl es im Wortsinn eine Meta-Aussage &#252;ber ein Modell-Element ist, und damit eigentlich keinem fachlichen Zweck dient -- man es unserer oben formulierten Strategie nach also dem fachlichen Modell weg-separieren sollte -- haben wir darauf verzichtet, dies zu tun, da &quot;der Rest der Welt&quot; es auch nicht tut, was in der Praxis dann mangels entsprechender Convention dazu f&#252;hren w&#252;rde, dass man nur nach der Dokumentation suchen w&#252;rde [oder nicht mal das, da man sie evtl. f&#252;r gar nicht existent hielte].</p>
+<h5 id="&#252;bung-2">&#220;bung</h5>
+Lassen Sie sich mit der SPARQL-Abfrage<br />
+<blockquote>
+<a href="https://test.lindas-data.ch:8443/zhkrdb#!/query/SELECT%20*%0AWHERE%20%0A{%20%0A%20%20GRAPH%20%3Fg%20%0A%20%20{%20%0A%09%3Fs%20rdfs%3Acomment%20%3Fcomment%20.%0A%20%20}%20%0A}"><tt>SELECT *<br />WHERE<br />{<br />&#160;&#160;GRAPH ?g<br />&#160;&#160;{<br />&#160;&#160;&#160;&#160;?s rdfs:comment ?comment .<br />&#160;&#160;}<br />}</tt></a><br />
+</blockquote>
+<p>alle Kommentare unserer Best&#228;nde anzeigen.</p>
+<h2 id="integration-mit-anderen-wissens-quellen">Integration mit anderen Wissens-Quellen</h2>
+<p>Zur Integration mit anderen Quellen gibt es im RDF-&#214;kosystem mindestens die folgenden Mechanismen:</p>
+<h3 id="direkte-benutzung">Direkte Benutzung</h3>
+<p>Die einfachste und nat&#252;rlichste Form der Wiederbenutzung ist die direkte Verwendung. Dazu gibt man einfach den Identifier des Modell-Elements, das man benutzt, an.</p>
+<p>Selbstverst&#228;ndlich holt man sich damit die ganze Semantik, die an diesem Modell-Element h&#228;ngt, &quot;ins Haus&quot;. Das ist gut so -- sollte aber auch der eigenen Absicht entsprechen.</p>
+<p>Das aktuelle KRDB-LD-Modell nutzt keine Fremd-Modell-Elemente im semantischen Sinn direkt. Lediglich im Ontologie-Mapping-Graphen werden Fremd-Identifier benutzt, im folgenden Beispiel die der Gemeinsamen Norm-Datei:</p>
+<blockquote>
+<p><a href="https://test.lindas-data.ch:8443/zhkrdb#!/query/select%09*%0Awhere%0A{%09%0A%09graph%09%3Chttps%3A%2F%2Flinked.opendata.swiss%2Fgraph%2Fzhkrdb%2Fld%2F10%2Fcopula%2Fperson%3E%09%0A%09{%09%0A%20%20%20%09%09%3Fs%20%3Chttps%3A%2F%2Fke.ji.zh.ch%2Fkrdb%2Fld%2F10%2Frelatio%2Fomnes%2Feq_real_gnd%3E%20%20%3Fo%20.%0A%20%20%20%20}%09%0A}%0A"><tt>SELECT *<br />WHERE<br />{ &#160; &#160;&#160;GRAPH &lt;https://linked.opendata.swiss/graph/zhkrdb/ld/10/copula/person&gt;<br />&#160;&#160;{<br />&#160;&#160;&#160;&#160;?s &lt;https://ke.ji.zh.ch/krdb/ld/10/relatio/omnes/eq_real_gnd&gt; ?o .<br />&#160;&#160;}<br />}<br /></tt></a></p>
+<h3 id="federated-queries">Federated Queries</h3>
+<p>Mit einer &quot;federated Query&quot; kann man an einen SPARQL-Endpoint eine &quot;<tt>SERVICE</tt>&quot;-Teil-Abfrage stellen, die er an einen anderen SPARQL-Endpoint weitergibt und dessen Ergebnisse in den lokalen Abfrage-Teil integriert:</p>
+<blockquote>
+<tt>SELECT ?a<br />FROM &lt;mybooks.rdf&gt;<br />{<br />&#160;&#160;?b dc:title ?title .<br />&#160;&#160;SERVICE &lt;http://sparql.org/books&gt;<br />&#160;&#160;&#160;&#160;{ ?s dc:title ?title . ?s dc:creator ?a }<br />}</tt>
+</blockquote>
+
+<h3 id="theorie-alignment">Theorie-Alignment</h3>
+<p>Hier nutzen mehrere Instanz-Ressourcen die selbe Ontologie {Modell auf Klassen-Ebene, Theorie}. Werden mehrere solche Instanz-Ressourcen parallel zusammen genutzt, f&#252;hlen sie sich bei der Nutzung, z.B. SPARQL-Queries an als w&#228;ren sie eins. Sie haben ja die gleiche Struktur und die Muster im Bedingungsteil von Abfragen sind immer am [gemeinsamen] Meta-Modell entlang gebaut.</p>
+<h3 id="einh&#228;ngen-in-andere-ontologien">&quot;Einh&#228;ngen&quot; in andere Ontologien</h3>
+<p>Modelle wachsen [leider] meistens von unten nach oben und tragen ihre eigenen aus dem lokalen ad-hoc-Kontext entstandenen Strukturen. Stellt man sp&#228;ter fest, dass Teil-Strukturen zu anderen, evtl. schon verbreiteteren Modellen passen, kann man durch einen simplen Trick {die Idee dahinter ist die gleiche wie beim <a href="https://www.geeksforgeeks.org/adapter-pattern/">&quot;Adapter&quot;-Pattern des GoF-Buchs</a>} Kompatibilit&#228;t herbeif&#252;hren:</p>
+<p>Man behauptet einfach, eine eigene Struktur sei Sub-Struktur einer bestimmten Fremdstruktur, die &#228;hnlich genug aussieht.</p>
+<p>Der Zweck dieses Einhaengens ist die Vereinfachung von SPARQL-Queries und anderen Meta-Modell-spezifischen Traversier-Taetigkeiten.</p>
+<p>Generell muessen SPARQL-Queries an der Struktur des befragten Materials ausgerichtet sein. Werden mehrere Quellen unterschiedlicher Struktur gleichzeitig befragt, fuehrt dies zu Abfragen, die die gesamte [benutzte] Strukturvielfalt beinhalten. Der Anteil der Struktur-Vielfalt, der keine fachliche Ursache hat, sondern Syntactic-Sugar der Modellier-Beliebigkeit des Materials darstellt, kann wegreduziert werden, wenn man bedeutungsgleiche Struktur-Elemente von einem gemeinsamen externen &quot;Aufhaenger&quot; subsumieren (=erben) laesst. Das RDFS-Inferencing des Triple-Stores sorgt dann dafuer, dass man fuer jeden Aufhaenger auch all dessen Sub-Strukturen (Sub-Klasse, Sub-Property) geliefert bekommt. Damit blickt ein Abfrager sozusagen mit der Brille der Einhaenge-Ontologie auf das Material, das &quot;die da, in der Zuercher Enge&quot; gebastelt haben und braucht sich nur insoweit um unsere lokalen Modellier-Details kuemmern, wie sie sich vom Subsumierten unterscheiden [sofern das fuer ihn relevant ist].</p>
+<p>Ein h&#228;ufig verwendeter Fall ist, eine Beziehung im eigenen Modell, die auf ein Literal zeigt, zur <tt>subPropertyOf</tt> <tt>rdfs:label</tt> zu machen.</p>
+<p>Sucht dann jemand nach allen Labels, bekommt er automatisch auch die eigenen Literal-Attribute mitgeliefert.</p>
+<h3 id="ontologie-mapping-1">Ontologie-Mapping</h3>
+<p>Wie oben schon gesagt, sind Ontologie-Mapping-Informationen ihrem Wesen nach nicht semantisch. Trotzdem sind die Verweis-Kanten ein Hilfsmittel um Redundanzen im Grossen zu verringern und die anderen, gerade genannten Intergrations-Mechanismen zu unterst&#252;tzen.</p>
+<h2 id="die-inhaltlichen-kernkonzepte-des-modells">Die inhaltlichen Kernkonzepte des Modells</h2>
+<p><img style="uml_diagram" src="classdiagram_10_03.svg" alt="KRDB-Klassen-Modell in UML-Form" width="100%" /></p>
+<h3 id="der-rat-und-seine-mitglieder">Der Rat und seine Mitglieder</h3>
+<h4 id="entit&#228;ten">Entit&#228;ten</h4>
+<p>Die beiden zentralen Entit&#228;ten des Modells sind &quot;Rat&quot; und &quot;Person&quot;.</p>
+<h5 id="rat">Rat</h5>
+<p>Im obigem UML-Diagram liegt die Rats-Entit&#228;t ganz links, da sie das komplexeste Objekt ist.</p>
+<p>Diese Abh&#228;ngigkeits-Richtung ist auch ganz nat&#252;rlich, da man erwartet, den Rat nach seinen Mitgliedern befragen zu k&#246;nnen, w&#228;hrend es unangemessen anstrengend w&#228;re, jede Person des &quot;Universums&quot; danach zu befragen, welcher R&#228;te Mitglied sie ist.</p>
+<h5 id="person">Person</h5>
+<p>Die zweite essentielle Entit&#228;t ist die Person. Das Kantonsrats-Modell zeichnet hierf&#252;r das Bild eines B&#252;rgers, der Beziehungen zu anderen Personen {via Zivilstand} und zu Institutionen haben kann, irgendwo wohnt, einen Beruf, ggf. akademischen Titel, eine Religionszugeh&#246;rigkeit, ein Geschlecht und als schweizer Spezialit&#228;t einen B&#252;rgerort &quot;hat&quot;.</p>
+<p>Die Menge an hier so beschriebenen Personen-Instanzen umfasst bisher Menschen, die irgendwann einmal Mitglied eines Z&#252;rcher Rates waren sowie deren Ehepartner. Es spr&#228;che aber nichts dagegen, eine Personen-&quot;Liste&quot; in Anspruch zu nehmen, die umfassender, also nicht auf Ratsmitglieder beschr&#228;nkt ist.</p>
+<p>Gewissermassen ist &quot;Person&quot; eine abstrakte Klasse, da sie eine geschlechtslose Person modelliert. Davon gibt es typischerweise keine Instanzen.</p>
+<p>Das Geschlecht einer Person ist als entsprechende Subklasse von Person modelliert:</p>
+<ul>
+<li>&quot;<tt>Person_w</tt>&quot; f&#252;r weibliche Personen</li>
+<li>&quot;<tt>Person_m</tt>&quot; f&#252;r m&#228;nnliche Personen .</li>
+</ul>
+<h4 id="beziehungen">Beziehungen</h4>
+<p>Bereits in obigem UML-Diagramm sehen wir die einfachen Beziehungen, die &quot;Person&quot; zu ihren Attributen hat {Wohnort, Beruf, ...}. Diese Beziehungen werden weiter unten kurz erl&#228;utert.</p>
+<p>Die wichtigen Beziehungen in unserem Modell sind aber in Wirklichkeit komplexer als wir sie in obigem UML-Diagramm dargestellt haben. Sie tragen vielmehr als Nutzlast ein kleines Modell, das die Art der Beziehung im Detail beschreibt. Ein Mittel, diese Nutzlast an eine Beziehung zu h&#228;ngen, ist, die direkte Kante durch eine Assoziationsklasse zu unterbrechen, an der dieses kleine Beziehungs-Modell h&#228;ngt. In unserem Fall lauten diese Assoziationsklassen &quot;Einsitz&quot;, &quot;Bindung&quot; und &quot;Zivilstand&quot;:</p>
+<p><img style="uml_diagram" src="classdiagram_10_02.svg" alt="KRDB-Klassen-Modell in UML-Form" width="100%" /></p>
+<h5 id="person-in-der-mitgliedschafts-rolle">Person in der Mitgliedschafts-Rolle</h5>
+<p>Die zentrale Beziehung des Modells ist die der Mitgliedschaft, die beschreibt, welche Personen dem Rat w&#228;hrend welcher Zeitspannen angeh&#246;rt haben. Eine Person steht also in der Rolle eines Mitglieds in Beziehung zum Rat.</p>
+<p>An dieser Beziehung h&#228;ngt &#252;ber die Assoziationsklasse &quot;Einsitz&quot; als &quot;Nutzlast&quot; ein kleines Modell, das den Charakter der Mitgliedschaft genauer beschreibt:</p>
+<ul>
+<li>ausser der einfachen Mitgliedschaft, gibt es Unterarten {&quot;Funktion&quot;}, die speziellere Rollen beschreiben, z.B. verschiedene Arten von Pr&#228;sident-schaft.</li>
+<li>die Mitgliedschaft ist fallweise einer politischen Interessensvertretung (Partei, Fraktion) zugeordnet</li>
+<li>die Mitgliedschaft ist einem Wahlkreis zugeordnet</li>
+</ul>
+<h5 id="person-in-der-rolle-der-gebundenheit-an-die-interessen-einer-institution">Person in der Rolle der Gebundenheit an die Interessen einer Institution</h5>
+<p>Um m&#246;gliche Interessenskonflikte, in denen ein Ratsmitglied stehen k&#246;nnte, transparenter zu machen, werden Institutionen modelliert, die an eine Person Erwartungen an sein Verhalten haben k&#246;nnten. Z.B. sind das wirtschaftliche Verpflichtungen, die eine Person -- insbesondere ein Ratsmitglied -- gegen&#252;ber einer Institution haben kann, von der er Geld erh&#228;lt, z.B. Unternehmensbeteiligungen.</p>
+<p>Seit Beginn des Jahrhunderts ist die Transparenz sogar als Offenlegungspflicht f&#252;r Interessensbindungen gesetzlich festgeschrieben, im Kt. ZH zB im <a href="http://www2.zhlex.zh.ch/Appl/zhlex_r.nsf/0/08C56C56E70A348AC12581F4002999EC/$file/171.1_5.4.81_99.pdf">Kantonsratsgesetz LS 171.1 . 5a</a>, ebenso f&#252;r den <a href="https://www.zh.ch/bin/ktzh/rrb/beschluss.pdf?rrbNr=112&amp;name=RRB-2017-112&amp;year=2017&amp;_charset_=UTF-8">Regierungsrat (RRB 2017/112)</a>. Zumindestens die polit. Bindungen wurden hier in der KRDB auch fallweise auch f&#252;r &#228;ltere Mitglieder erhoben, z.B. &quot;Gemeinderat Meilen - Pr&#228;sident, von-bis&quot;...</p>
+<h5 id="person-in-der-rolle-als-zivilstands-partner">Person in der Rolle als Zivilstands-Partner</h5>
+<p>Interessenskonflikte k&#246;nnen sich aber nicht nur durch wirtschaftliche Beziehungen ergeben. Auch soziale Bindungen eines Rates k&#246;nnen sein Verhalten beeinflussen. Die herausragende aktenkundige soziale Beziehung ist die eheliche Beziehung zu einem Partner. Diese Beziehung ist durch den Zivilstand modelliert.</p>
+<h2 id="die-modell-elemente-im-detail">Die Modell-Elemente im Detail</h2>
+<p>Bisher haben wir das Kern-Skelett des Modells skizziert. Das komplette fachliche Modell enth&#228;lt aber noch weitere Feinheiten:</p>
+<p><img style="uml_diagram" src="classdiagram_10_01.svg" alt="KRDB-Klassen-Modell in UML-Form" width="100%" /></p>
+<p>Insbesondere zeigt es, dass die meisten Modell-Sachverhalte nur w&#228;hrend bestimmter Zeit-Intervalle g&#252;ltig waren. Das UML-Modell oben stellt dies als Zeit-Intervall-Klasse {ganz oben} dar. Im KRDB-Modell sind Zeitintervalle aber nicht errerbt, sondern &quot;inline&quot; in den jeweiligen Entit&#228;ten selbst enthalten.</p>
+<p>Ausserdem sind nun die m&#246;glichen Werte Spezialisierungen f&#252;r &quot;Funktion&quot; und Zivilstand ausmodelliert.</p>
+<h3 id="die-haupt-beziehungen-im-modell">Die Haupt-Beziehungen im Modell</h3>
+<p>Von der Person zu unterscheiden sind die Rollen, in denen eine Person in einer Situation auftreten kann. Diese Rollen sind beschrieben als die Beziehungen, die auf eine Person[en-Entit&#228;t] verweisen.</p>
+<h4 id="einsitz">Einsitz</h4>
+<p>Der genauere Charakter der Mitgliedschaft einer Person in einem Rat ist von mehreren &quot;Parametern&quot; gepr&#228;gt. Es ist &#252;blich, solche reichhaltigen Beziehungen sozusagen zu verdinglichen. Man unterbricht dabei die Beziehung durch einen Knoten, der die ganze Nutzlast der Characteristica der Beziehung tr&#228;gt. Einen solchen Zwischen-Knoten nennt man Assoziations-Klasse.</p>
+<p>Die Assoziationsklasse, die die Characteristica der Mitgliedschaft einer Person in einem Rat tr&#228;gt, heisst in unserem Modell &quot;Einsitz&quot;.</p>
+<h5 id="funktion">Funktion</h5>
+<p>Normalerweise ist eine Person w&#228;hrend eines Einsitzes in einem Rat einfaches Mitglied.</p>
+<p>Sie kann aber w&#228;hrend bestimmter Perioden eine spezieller Art der Mitgliedschaft bekleiden, z.B. als Rats-Pr&#228;sident. Im UML-Diagramm oben sind diese Unterarten als Subklassen von &quot;Funktion&quot; dargestellt. Im RDF-Modell sind die Unterarten als Sub-Properties der allgemeinen Mitglieds-Property modelliert.</p>
+<h5 id="partei-association">Partei-Association</h5>
+<p>Eine Person kann w&#228;hrend eines Einsitzes zu bestimmten Perioden als Vertreter einer Partei und als Vertreter einer Fraktion Mitglied des Rates sein.</p>
+<p>&quot;Partei-Association&quot; ist eine Assoziationsklasse, die die Beziehung von Einsitz zu Partei und Fraktion genauer beschreibt.</p>
+<h5 id="partei">Partei</h5>
+<p>Partei ist das, was auch der B&#252;rger &quot;draussen auf der Strasse&quot; unter Partei versteht.</p>
+<p>Im gegebenen Modell hat diese Entit&#228;t keine weitere Struktur.</p>
+<h5 id="fraktion">Fraktion</h5>
+<p>Fraktion ist das, was auch der B&#252;rger &quot;draussen auf der Strasse&quot; unter Fraktion versteht.</p>
+<p>Im gegebenen Modell hat diese Entit&#228;t keine weitere Struktur.</p>
+<h5 id="wahlkreis">Wahlkreis</h5>
+<p>Diese Angabe ist der Wahlkreis, als Vertreter dessen ein Mitglied in einem Rat einsitzt.</p>
+<h6 id="&#252;bung-3">&#220;bung</h6>
+Die folgende SPARQL-Abfrage listet alle Personen auf, die irgendwann einmal als Mitglied einer Partei mit der Bezeichnung &quot;CVP&quot; Pr&#228;sidiums-Mitglied waren:
+<blockquote>
+<a href="https://test.lindas-data.ch:8443/zhkrdb#!/query/SELECT%20*%20%0AWHERE%20%0A{%20%0A%20%20GRAPH%20%3Fg_einsitz%0A%20%20{%20%0A%20%20%20%20%3Feinsitz%20rdf%3Atype%20kr_10_genus%3AEinsitz%20.%0A%20%20%20%20%3Feinsitz%20kr_10_rel%3Aperson%20%3Fperson%20.%0A%20%20%20%20%3Feinsitz%20kr_10_rel%3Aeinsitz_parteiassoc%20%3Fpa%20.%0A%20%20}%20%0AGRAPH%20%3Fg_pa%0A%20%20{%20%0A%09%3Fpa%20kr_10_rel%3Aassoc_partei%20%3Fpartei%20.%0A%20%20}%20%0AGRAPH%20%3Fg_partei%0A%20%20{%20%0A%09%3Fpartei%20kr_10_rel%3Apartei_bezeichnung%20%22CVP%22%20.%0A%20%20}%20%0AGRAPH%20%3Fg_person%0A%20%20{%20%0A%09%3Fperson%20rdf%3Atype%20kr_10_genus%3APerson%20.%0A%20%20%20%20%3Fperson%20rdfs%3Alabel%20%3Flabel%20.%0A%20%20}%20%0AGRAPH%20%3Fg_einsitz%20%0A%20%20{%20%0A%20%20%20%20%3Feinsitz%20kr_10_rel%3Afunktion%20%3Ffkt%20.%0A%20%20}%20%0AGRAPH%20%3Chttps%3A%2F%2Flinked.opendata.swiss%2Fgraph%2Fzhkrdb%2Fld%2F10%2Fres%2Ffunktion%3E%20%0A%20%20{%20%0A%20%20%20%20%3Ffkt%20rdf%3Atype%20kr_10_genus%3AFunktion__Pr%C3%A4sidium%20.%20%0A%20%20}%20%0A}%0A%0A/reasoning/true"><tt>SELECT *<br />WHERE<br />{<br />&#160;&#160;GRAPH ?g_einsitz<br />&#160;&#160;{<br />&#160;&#160;&#160;&#160;?einsitz rdf:type kr_10_genus:Einsitz .<br />&#160;&#160;&#160;&#160;?einsitz kr_10_rel:person ?person .<br />&#160;&#160;&#160;&#160;?einsitz kr_10_rel:einsitz_parteiassoc ?pa .<br />&#160;&#160;}<br />&#160;&#160;GRAPH ?g_pa<br />&#160;&#160;&#160;&#160;{<br />&#160;&#160;&#160;&#160;&#160;&#160;?pa kr_10_rel:assoc_partei ?partei .<br />&#160;&#160;&#160;&#160;}<br />&#160;&#160;GRAPH ?g_partei<br />&#160;&#160;&#160;&#160;{<br />&#160;&#160;&#160;&#160;&#160;&#160;?partei kr_10_rel:partei_bezeichnung &quot;CVP&quot; .<br />&#160;&#160;&#160;&#160;}<br />&#160;&#160;GRAPH ?g_person<br />&#160;&#160;&#160;&#160;{<br />&#160;&#160;&#160;&#160;&#160;&#160;?person rdf:type kr_10_genus:Person .<br />&#160;&#160;&#160;&#160;&#160;&#160;?person rdfs:label ?label .<br />&#160;&#160;&#160;&#160;}<br />&#160;&#160;GRAPH ?g_einsitz<br />&#160;&#160;&#160;&#160;{<br />&#160;&#160;&#160;&#160;&#160;&#160;?einsitz kr_10_rel:funktion ?fkt .<br />&#160;&#160;&#160;&#160;}<br />&#160;&#160;GRAPH &lt;https://linked.opendata.swiss/graph/zhkrdb/ld/10/res/funktion&gt;<br />&#160;&#160;&#160;&#160;{<br />&#160;&#160;&#160;&#160;&#160;&#160;?fkt rdf:type kr_10_genus:Funktion__Pr&#228;sidium .<br />&#160;&#160;&#160;&#160;}<br />}</tt></a><br />
+</blockquote>
+
+
+<h4 id="bindung">Bindung</h4>
+<p>Eine Person, die Ratsmitglied ist, steht &#252;blicherweise nicht isoliert in der Gesellschaft, sondern hat weitere Beziehungen zu anderen Personen und Institutionen. Die Kantonsratsdatenbank modelliert die Beziehung zwischen Institutionen und Personen um transparent zu machen, welche anderen, ausser Partei- und Fraktions-Interessen eine Rats-Mitglieds-Person m&#246;glicherweise verfolgt.</p>
+<p>&quot;Bindung&quot; ist eine Assoziationsklasse, auf der Beziehung zwischen Institutionen und Personen. Die Art der Bindung ist durch die Angabe der Bindungskategorie parametriert, die die spezielle Art der Bindung zwischen einer Person und einer Institution ausdr&#252;ckt. Der einzige Wert, der momentan im Datenbestand vorkommt, ist &quot;politisches Amt&quot;.</p>
+<h4 id="zivilstand">Zivilstand</h4>
+<p>Eine besonders gut fassbare enge Beziehung zu anderen Personen ist Ehe.</p>
+<p>Deshalb modelliert die KRDB die Lebensphasen, w&#228;hrend der und mit wem die R&#228;te verheiratet waren.</p>
+<p>Mit dem &quot;neuen&quot; KRDB-LD-Modell k&#246;nnten auch [Interessens-]Bindungen von Ehe-Partnern erfasst werden. Der bisherige Datenbestand bringt solche Angaben nicht mit.</p>
+<h3 id="die-attribute-von-person">Die Attribute von Person</h3>
+<h4 id="name-und-vorname">Name und Vorname</h4>
+<p>Name und Vorname sind zwei spezielle Labels mit denen man &#252;ber eine Person spricht.</p>
+<p>UML-technisch h&#228;ngt ein String-Literal &#252;ber eine Beziehung {&quot;Property&quot;} &quot;name&quot; bzw. &quot;vorname&quot; an Personen. Die Beziehungen &quot;name&quot; und &quot;vorname&quot; werden im &quot;affix&quot;-Named-Graphen als subPropertyOf &quot;rdfs:label&quot; deklariert.</p>
+<h4 id="wohnort">Wohnort</h4>
+<p>Von einer b&#252;rgerlichen Person soll man wissen, wann sie wo offiziell gewohnt hat.</p>
+<p>Der Datentyp von Wohnort ist eigentlich eine Adresse {kein Postfach}, das in der Rolle eines Wohnorts zu einer Person steht.</p>
+<p>Strasse und Hausnummer fehlen im aktuellen KRDB-Modell.</p>
+<!-- eigentlich sollte die "Wohnort"-Klasse in "Adresse" umbenannt werden.  Die Wohnort-Rolle der Beziehung bleibt.  Die G&#252;ltigkeits-Zeitspanne kommt dann an die Beziehung -->
+
+
+<h4 id="b&#252;rgerort">B&#252;rgerort</h4>
+<p>Der B&#252;rgerort ist eine Spezialit&#228;t des schweizer B&#252;rger-Personen-Modells. Der B&#252;rgerort ist eine Gemeinde, die langfristig grundlegende B&#252;rgerdaten verwaltet und bis 1926 auch armenrechtlich eine grosse Rolle spielte. Auch der B&#252;rgerort einer Person kann sich aber von Zeit zu Zeit &#228;ndern.</p>
+<!-- eigentlich sollte die "B&#252;rgerort"-Klasse in "Gemeinde" umbenannt werden.  Die B&#252;rgerort-Rolle der Beziehung bleibt.  Die G&#252;ltigkeits-Zeitspanne kommt dann an die Beziehung -->
+
+
+<h4 id="beruf-akademischer-titel-dienstgrad-konfession">Beruf, Akademischer Titel, Dienstgrad, Konfession</h4>
+<p>Auch Beruf, Akademischer Titel, Dienstgrad und Konfession werden als pr&#228;gend f&#252;r das Wesen einer [Rats-]Person erachtet.</p>
+<p>Die Instanzen dieser Angaben sind durch Objektifizierung von String-Attributen des urspr&#252;nglichen Datenbestandes entstanden. Dort wurden sie gr&#246;&#223;tenteils treu von den Originalquellen (&quot;offiziellen&quot; Publikationen Regierungsetats, Staatskalender und Kantonsratslisten) &#252;bernommen und bisher nicht mit heutigen &quot;offiziellen&quot; Listen abgeglichen. Auch Schreibweisen-Variationen von Dingen, die eigentlich das Gleiche bedeuten, sind bisher noch nicht zusammengezogen.</p>
+<p>Auch diese durch Objektifizierung entstandenen Klassen enthalten den Klassen-Namen im Prefix des Identifiers: ...<tt>/10/res/${klassen_name}/</tt>, z.B. ...<tt>/10/res/beruf/&#214;nologin</tt></p>
+<h5 id="&#252;bung-4">&#220;bung</h5>
+<p>F&#252;hren Sie noch einmal die im Abschnitt 'Identifier-&quot;Syntax&quot;' angegebene SPARQL-Abfrage durch. Ersetzen Sie den dort konkret angegebenen Personen-Identifier durch die Variable &quot;?person&quot;. Evtl. k&#246;nnen Sie an die Abfrage ein &quot;ORDER BY ?person&quot; anh&#228;ngen, um die Ergebnisse nach Personen-ID zu sortieren.</p>
+<h2 id="nicht-fachliche-aspekte">Nicht-fachliche Aspekte</h2>
+<p><img style="uml_diagram" src="classdiagram_10_00.svg" alt="KRDB-Klassen-Modell in UML-Form" width="100%" /></p>
+<h3 id="literatur--und-quellen-nachweise">Literatur- und Quellen-Nachweise</h3>
+<p>F&#252;r die beiden Entit&#228;ten &quot;Einsitz&quot; und &quot;Person&quot; werden Herkunfts-Angaben {&quot;*quelle&quot;} gepflegt. Sie sind in den links unten hinzugekommenen Modell-Sektionen zu sehen.</p>
+<p>In Anlehnung an die Strukturen von &quot;<a href="http://dcevents.dublincore.org/IntConf/dc-2013/paper/viewFile/197/120">Prov-O</a>&quot; betrachten wir Modell-Elemente als das Ergebnis einer Erzeugungs-Aktivit&#228;t. Dh. man geht davon aus, dass ein [meistens menschlicher] Aktor im Rahmen eines Erzeugungs-Prozesses ein Modell-Element unter Hinzuziehung von Quell-Material hervorgebracht hat. Eine solche Aktivit&#228;t {&quot;<tt>Einsitz_generation_activity</tt>&quot;, &quot;<tt>Person_generation_activity</tt>&quot;} bezieht sich auf das, was erzeugt wurde {&quot;<tt>Einsitz</tt>&quot;, &quot;<tt>Person</tt>&quot;}. Sie nennt ausserdem die hinzugezogene Quelle. Typischerweise sagen Erzeugungs-Aktivit&#228;ten auch, wann sie begonnen und beendet wurden. Entsprechende Angaben fehlen in unserem Modell.</p>
+<p>Im UML-Modell finden sich die entsprechenden Klassen links unten.</p>
+<p>Im Identifier-Prefix enthalten die Aktivit&#228;ten den Teil-String &quot;<tt>prov</tt>&quot;. Sie werden in einem Named-Graphen mit dem Teil-String &quot;<tt>meta</tt>&quot; im Identifier abgelegt.</p>
+<h4 id="&#252;bung-5">&#220;bung</h4>
+<p>Die folgende Beispiel-SPARQL-Abfrage liefert zu allen Personen die vorhandenen Quell-Angaben:</p>
+<blockquote>
+<a href="https://test.lindas-data.ch:8443/zhkrdb#!/query/%23%20von%20einem%20Person-Modell-Element%20kommt%20man%20zu%20seiner%20Quelle%20ueber%20die%20%3Fperson_erzeugung-Aktivitaet%3A%0A%23%20Sinn%20dieses%20%22Umwegs%22%20ist%20die%20Angleichung%20an%20die%20Modellierung%20von%20Prov-O%2C%20wo%20Dinge%20%28Dokumente%2C%20Modell-Elemente%29%20aus%20Aktivitaeten%20%28Erzeugung%2C%20Aenderung%29%20entstehen.%20%20Diese%20Aktivitaeten%20benutzen%20ursprueglicheres%20Material%2C%20in%20unserem%20Fall%20die%20%3Fperson_quelle%2C%20die%20mit%20%22person_quellen_angabe%22%20verbal%20beschreibt%2C%20wo%20das%20Person-Modell-Element%20herkommt.%0Aselect%09%3Fperson%20%3Fperson_erzeugung%20%3Fperson_quelle%20%3Fp%20%3Fo%0Awhere%0A{%09%0A%09graph%09%3Chttps%3A%2F%2Flinked.opendata.swiss%2Fgraph%2Fzhkrdb%2Fld%2F10%2Fmeta%2Fperson%3E%09%0A%09{%09%0A%0A%20%20%20%09%09%3Fperson_erzeugung%20kr_10_rel%3Agenerated%20%3Fperson%20.%0A%09%09%3Fperson_erzeugung%20kr_10_rel%3Aperson_quelle%20%3Fperson_quelle%20.%0A%20%20%20%20%20%20%20%20%3Fperson_quelle%20%3Fp%20%3Fo%20.%0A%20%20%20%20}%09%0A}%0AORDER%20BY%20%3Fperson%0A"><tt># von einem Person-Modell-Element kommt man zu seiner Quelle ueber die ?person_erzeugung-Aktivitaet: # Sinn dieses &quot;Umwegs&quot; ist die Angleichung an die Modellierung von Prov-O, wo Dinge (Dokumente, Modell-Elemente) aus Aktivitaeten (Erzeugung, Aenderung) entstehen. Diese Aktivitaeten benutzen ursprueglicheres Material, in unserem Fall die ?person_quelle, die mit &quot;person_quellen_angabe&quot; verbal beschreibt, wo das Person-Modell-Element herkommt.<br />SELECT ?person ?person_erzeugung ?person_quelle ?p ?o<br />WHERE<br />{ &#160; &#160;&#160;graph &lt;https://linked.opendata.swiss/graph/zhkrdb/ld/10/meta/person&gt;<br />&#160;&#160;{<br />&#160;&#160;&#160;&#160;?person_erzeugung kr_10_rel:generated ?person .<br />&#160;&#160;&#160;&#160;?person_erzeugung kr_10_rel:person_quelle ?person_quelle .<br />&#160;&#160;&#160;&#160;?person_quelle ?p ?o .<br />&#160;&#160;}<br />}<br />ORDER BY ?person</tt></a>
+</blockquote>
+
+
+<h3 id="ontologie-mapping-2">Ontologie-Mapping</h3>
+<h4 id="die-real-personen-nabe">Die Real-Personen-&quot;Nabe&quot;</h4>
+<p>Unsere Artgenossen sind f&#252;r uns so ungeheuer wichtig, dass sich gerade bei ihrer Modellierung eine endlose Vielfalt von Modellen entwickelt hat. Selbst f&#252;r recht abstrakte B&#252;rger-Modelle ist die Vielfalt noch gross. Die Modellierer der Kantonsratsdatenbank waren sich dessen auch bewusst. Sie haben, soweit ihnen bekannt, Bez&#252;ge {Identifier} zu einigen anderen Personen-Modellen in ihr Modell eingebaut. Das B&#252;ndel dieser Bez&#252;ge ist im Modell durch die &quot;Klasse&quot; &quot;<tt>copula:Person</tt>&quot; verk&#246;rpert, die in obigem Diagramm mit den Fremd-Personen-Klassen unterhalb der Klasse &quot;<tt>Person</tt>&quot; zu finden ist.</p>
+<p>Wie in obigem Abschnitt &quot;Bez&#252;ge zu anderen Modellen&quot; schon erw&#228;hnt, tragen solche Referenzen keine fachliche &quot;Nutzlast&quot;, dh. sie machen keine Seins-Aussagen &#252;ber den Charakter von Personen. Deshalb wurde f&#252;r jede hier bekannte Real-Person ein Modell-Knoten erzeugt, der keine ontologischen Aussagen macht. Von diesem Knoten gehen nur Bez&#252;ge zu den uns bekannten Entit&#228;ten aus, die die gleiche Real-Person in unserem Modell und anderswo modellieren. Eigentlich w&#228;re hierf&#252;r ein sogenannter <a href="https://en.wikipedia.org/wiki/Blank_node">Blank-Node</a> {ein Modell-Knoten ohne Identifier} das angemessene Ausdrucksmittel. Wir haben ihm dennoch einen Identifier &quot;spendiert&quot;, da er f&#252;r das ressourcen-&#252;bergreifende Ansprechen n&#246;tig ist. Dieser Identifier tr&#228;gt als &quot;<tt>meta</tt>&quot;-Sektion den String &quot;<tt>copula</tt>&quot;.</p>
+<p>Man kann &#252;ber diese Real-Personen-Nabe <em>zu anderen Modellen</em>, die Aussagen &#252;ber die gleiche Real-Person machen, <em>navigieren</em>. Diese anderen Modelle der gleichen Real-Person werden, da sie ganz unabh&#228;ngig von unserem Modell entstanden sind, andere Aspekte dieser Person modellieren. Man sollte also nicht erwarten, dass diese anderen Modelle die gleichen Aussagen &#252;ber die gleiche Person machen! Allerdings w&#252;rde es Kl&#228;rungsbedarf provozieren, wenn die Aussagen nicht erg&#228;nzend, sondern widerspr&#252;chlich w&#228;ren.</p>
+<p>In obigem UML-Klassen-Diagramm liegt die Klasse, die die Real-Person repr&#228;sentiert, etwas links unterhalb der Personen-Klasse.</p>
+<h2 id="integration-mit-anderen-semantischen-ressourcen">Integration mit anderen semantischen Ressourcen</h2>
+<h3 id="direkte-benutzung-1">Direkte Benutzung</h3>
+<p>Alle Klassen, die in obigem Klassen-Diagramm nur eingehende &quot;Pfeile&quot; haben, also nur von anderen Entit&#228;ten &quot;benutzt&quot; werden, sind eher einfache Dinge.</p>
+<p>Einfache Dinge sind aber hochgradig wiederbenutzbar. Wir werden also nicht lange suchen m&#252;ssen, um andernorts bereits, vermutlich sogar besser gepflegte, Modelle f&#252;r diese Dinge zu finden.</p>
+<p>Parteien, Fraktionen, Wahlkreise, Zivilst&#228;nde, [Wohn|B&#252;rger]orte, Berufe, akademische Titel, Dienstgrade und Konfessionen sind solche Dinge, bei denen wir danach trachten sollten, sie zuk&#252;nftig von einer authentischeren Quelle zu beziehen.</p>
+<h3 id="f&#246;derierte-sparql-abfragen">F&#246;derierte SPARQL-Abfragen</h3>
+<p>Als Zwischenl&#246;sung kann man symptomatisch mit federated SPARQL-Queries entsprechendes Fremd-Material ansprechen.</p>
+<h3 id="theorie-alignment-1">Theorie-Alignment</h3>
+<p>Im Zuge des KRDB-LODifizierungs-Projekts haben wir nach Fremd-Ontologien gesucht und einige Parlaments-, Personen- und Grundlagen-Ontologien davon im Hinblick auf die direkte Verwendung in unserem Modell evaluiert.</p>
+<p>Leider fanden sich dabei keine derart passenden Referenz-Ontologien, dass wir unsere R&#228;te und Personen zu <em>direkten</em> Instanzen dortiger Typen h&#228;tten machen wollen.</p>
+<p>Wir haben uns f&#252;r den oben schon angedeuteten etablierten Mechanismus einer etwas loseren Kopplung entschieden und vorgesehen, dass man sie in eine dieser Ontologien nach Wahl einh&#228;ngen kann.</p>
+<!-- Hier muesste man noch den Einh&#228;ng-Mechanismus in Fremd-Ontologien diskutieren... -->
+
+<h3 id="einh&#228;ngen-in-andere-ontologien-1">&quot;Einh&#228;ngen&quot; in andere Ontologien</h3>
+<h4 id="namen-und-vornamen-als-spezialisierungen-von-rdfslabel">Namen und Vornamen als Spezialisierungen von rdfs:label</h4>
+<p>Wir haben oben bereits im gleichnamigen Theorie-Abschnitt angedeutet, wie Namen und Vornamen als Spezialisierungen von &quot;<tt>rdfs:label</tt>&quot; benutzt werden k&#246;nnen. Konkret implementiert sind diese beiden Subsumptionen durch zwei Tripel im Named-Graphen &quot;<tt>&lt;https://linked.opendata.swiss/graph/zhkrdb/ld/10/affix/omnes&gt;</tt>&quot;:</p>
+<p><tt> kr_10_rel:nachname rdfs:subPropertyOf rdfs:label .<br />kr_10_rel:vorname rdfs:subPropertyOf rdfs:label .<br /></tt></p>
+<p>Damit haben wir unsere eigenen Beziehungen &quot;<tt>vorname</tt>&quot; und &quot;<tt>nachname</tt>&quot; in eine entsprechende &#220;berbeziehung &quot;<tt>label</tt>&quot; der RDFS-Ontologie eingeh&#228;ngt.</p>
+Mit dieser SPARQL-Abfrage k&#246;nnen Sie das &#252;berpr&#252;fen:
+<blockquote>
+<a href="https://test.lindas-data.ch:8443/zhkrdb#!/query/SELECT%20*%0AWHERE%20%0A{%0A%09%23%20alle%20Label%20im%20Graphen%20%22person%22%3A%0A%09GRAPH%20%3Chttps%3A%2F%2Flinked.opendata.swiss%2Fgraph%2Fzhkrdb%2Fld%2F10%2Fres%2Fperson%3E%20%0A%09{%20%0A%09%09%3Fs%20rdfs%3Alabel%20%3Flabel%20.%0A%09}%20%0A}%0AORDER%20BY%20%3Fs%0A%23%0A%23%20Sie%20werden%20sehr%20wahrscheinlich%20eine%20leere%20Ergebnis-Liste%20erhalten%0A%23%20Schalten%20Sie%20nun%20Reasoning%20ein%20und%20wiederholen%20Sie%20die%20Abfrage!%0A%23%20welche%20Labels%20erhalten%20Sie%20jetzt%3F%0A%23%20Warum%20erhalten%20Sie%20pro%20Subjekt%20mehrere%20Labels%3F%0A%23%20Welches%20sind%20die%20Properties%2C%20die%20die%20erhaltenen%20Subjekte%20mit%20den%20erhaltenen%20Objekten%20verbinden%3F%0A%23%20In%20welchem%20Graphen%20befindet%20sich%20die%20verantwortliche%20%22subPropertyOf%22%3F%0A%23%20Wie%20lange%20hat%20der%20Triplestore%20jeweils%20mit%20seiner%20Antwort%20gebraucht%3F%0A"><tt> SELECT *<br />WHERE<br />{<br /> # alle Label im Graphen &quot;person&quot;:<br /> GRAPH &lt;https://linked.opendata.swiss/graph/zhkrdb/ld/10/res/person&gt;<br /> {<br /> ?s rdfs:label ?label .<br /> }<br />}<br />ORDER BY ?s<br />#<br /># Sie werden sehr wahrscheinlich eine leere Ergebnis-Liste erhalten<br /># Schalten Sie nun Reasoning ein und wiederholen Sie die Abfrage!<br /># welche Labels erhalten Sie jetzt?<br /># Warum erhalten Sie pro Subjekt mehrere Labels?<br /># Welches sind die Properties, die die erhaltenen Subjekte mit den erhaltenen Objekten verbinden?<br /># In welchem Graphen befindet sich die verantwortliche &quot;subPropertyOf&quot;?<br /># Wie lange hat der Triplestore jeweils mit seiner Antwort gebraucht?<br /></tt></a>
+</blockquote>
+
+
+<h4 id="unsere-personen-als-spezialisierung-anderer-personen">Unsere Personen als Spezialisierung anderer Personen</h4>
+<h5 id="httpwww.w3.orgnspersonperson">http://www.w3.org/ns/person#Person</h5>
+Phil Archer und Andrea Perego haben f&#252;r die EU-Kommission eine <a href="https://joinup.ec.europa.eu/site/core_person/rdfs.html">Personen-Klasse</a> modelliert, die &#228;hnlich der KRDB-Person die Aspekte eines Menschen in seiner Rolle in einer b&#252;rgerlichen Gesellschaft in den Vordergrund stellt. Wir haben im Named-Graphen &quot;<tt>&lt;https://linked.opendata.swiss/graph/zhkrdb/ld/10/affix/omnes&gt;</tt>&quot; mit dem Tripel
+<blockquote>
+<tt> kr_10_genus:Person rdfs:subClassOf &lt;http://www.w3.org/ns/person#Person&gt; . </tt>
+</blockquote>
+<p>testweise die KRDB-Person zur Subklasse dieser Person gemacht.</p>
+Wenn Sie mit einschaltetem Reasoning nach den Instanzen der Klasse <http://www.w3.org/ns/person#Person suchen, werden Sie damit auch die KRDB-Personen-Instanzen als Ergebnisse geliefert bekommen.
+
+
+##### http://www.cidoc-crm.org/cidoc-crm/E21_Person
+
+Die in CIDOC-CRM modellierte Person stellt eher biologische Aspekte in den Kern der Betrachtungen.  
+
+Auch diese Person haben wir testweise im Named-Graphen "<tt>&lt;https://linked.opendata.swiss/graph/zhkrdb/ld/10/affix/omnes&gt;</tt>&quot; mit dem Tripel
+<blockquote>
+<tt> kr_10_genus:Person rdfs:subClassOf &lt;http://www.cidoc-crm.org/cidoc-crm/E21_Person&gt; . </tt>
+</blockquote>
+<p>zu einer Superklasse unserer KRDB-Person gemacht.</p>
+<p>Auch hier werden mit eingeschaltetem Reasoning KRDB-Personen zu Instanzen der CIDOC-Personen-klasse.</p>
+<p>In beiden F&#228;llen tun wir mit dem Einh&#228;ngen einen Dienst an den jeweiligen Communities, da sie nun auch unsere Personen in &quot;ihren&quot; Best&#228;nden finden [wenn ihre Queries auch den KRDB-Tripel-Bestand erfassen].</p>
+<p>Suchen Sie jetzt mal [mit eingeschaltetetem Reasoning nat&#252;rlich] nach Instanzen von foaf:Person ... . Warum bekommen Sie Resultate?</p>
+<h2 id="die-lod-krdb-auf-lindas">Die LOD-KRDB auf Lindas</h2>
+<!-- kann man das so auf github publizieren?  Da ist es ja weltweit lesbar.  Soll der Zugriff nur &#252;ber die Credentials geregelt werden? -->
+
+<p>Momentan kann man mit dem KRDB-LD-Modell auf der <a href="https://test.lindas-data.ch:8443/">Test-Instanz von LINDAS</a> zu Test-Zwecken arbeiten. Der Inhalt kann sich aber noch &#228;ndern.</p>
+<p>Auf dem openZH/krdb-lod-github-Bereich findet man <a href="https://github.com/openZH/krdb-lod/tree/master/examples">einige Beispiel-Abfragen</a> zum bequemeren Einstieg.</p>
