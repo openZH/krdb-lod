@@ -665,7 +665,7 @@ Phil Archer und Andrea Perego haben für die EU-Kommission eine [Personen-Klasse
 </blockquote>
 testweise die KRDB-Person zur Subklasse dieser Person gemacht.
 
-Wenn Sie mit einschaltetem Reasoning nach den Instanzen der Klasse <http://www.w3.org/ns/person#Person suchen, werden Sie damit auch die KRDB-Personen-Instanzen als Ergebnisse geliefert bekommen.
+Wenn Sie mit einschaltetem Reasoning nach den Instanzen der Klasse \<http://www.w3.org/ns/person#Person\> suchen, werden Sie damit auch die KRDB-Personen-Instanzen als Ergebnisse geliefert bekommen.
 
 
 ##### http://www.cidoc-crm.org/cidoc-crm/E21_Person
