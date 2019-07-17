@@ -1,0 +1,12 @@
+# Anzahl Tripel in den Named-Graphen des Reifegrads "10":
+SELECT (COUNT (?s) as ?n)
+WHERE
+{
+  FILTER ( STRSTARTS (STR(?g), "https://linked.opendata.swiss/graph/zhkrdb/ld/10" ))
+  GRAPH ?g 
+  {
+    ?s ?p ?o . 
+  }
+}
+# sollte ungefaehr 366664 ergeben...
+
