@@ -43,7 +43,7 @@ Bevor im nächsten Abschnitt das Modell vorgestellt wird, erläutern wir zunäch
 
 ### Trennung der Meta-Ebenen
 
-Das wichtigste Modularisierungs-Kriterium ist die Trennung der Meta-Ebenen.  Das Wort "Meta" wird dabei im speziellen Sinn der Meta-Modellierung verwendet, wie wir das von der [Meta Object Facility der OMG](https://www.omg.org/mof/) kennen  {siehe z.B. Folie 6 in [Uwe Assmann: Metamodelling and Metaprogramming](st.inf.tu-dresden.de/files/teaching/ss11/cbse/slides/02-metamodelling.pdf)}.
+Das wichtigste Modularisierungs-Kriterium ist die Trennung der Meta-Ebenen.  Das Wort "Meta" wird dabei im speziellen Sinn der Meta-Modellierung verwendet, wie wir das von der [Meta Object Facility der OMG](https://www.omg.org/mof/) kennen  {siehe z.B. Folie 6 in [Uwe Assmann: Metamodelling and Metaprogramming](https://st.inf.tu-dresden.de/files/teaching/ss11/cbse/slides/02-metamodelling.pdf)}.
 
 Auch wenn uns die technologische Basis des RDF-Oekosystems nicht dazu zwingt, bleibt es eine gute Idee, [Modell-Meta-Ebenen](https://flylib.com/books/en/1.508.1.61/1/) getrennt zu halten.
 
