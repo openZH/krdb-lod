@@ -1,35 +1,62 @@
-### reasoning sollte eingeschaltet sein, sonst bekommt man nur Resultate von Personen ohne Geschlecht {das sind ziemlich wenige}
-#
-## das waere die eigentliche Abfrage:
+# Rats-Mitglieder, die Praesident waren und in einem Wohnort lebten, dessen Name mit "Winterthur" beginnt:
+## das waere der eigentliche Select -- oder evtl. noch plus die einzelnen konkret gefragten Parameter:
 #select ?person
-## so sieht man besser, was alles "dranhaengt:
+## so sieht man besser, was alles "dranhaengt":
 select *
 where
 { 
- 
   { 
-    graph ?g0 
+    graph <https://linked.opendata.swiss/graph/zhkrdb/ld/10/res/person>
           { 
-            ?person rdf:type kr_10_genus:Person .
+            ?person rdf:type kr_10_genus:Person .	# hier ist RDFS-Reasoning noetig, sonst gibts nur geschlechtslose Resultate...
             ?person kr_10_rel:wohnort ?wohnort .
-            ?person ?p0 ?o0 .
+            ?person kr_10_rel:nachname ?nachname .
+            ?person kr_10_rel:vorname ?vorname .
           } 
-    graph ?g1
+    graph <https://linked.opendata.swiss/graph/zhkrdb/ld/10/res/wohnort>
           { 
             ?wohnort kr_10_rel:gemeindename ?wohnort_bezeichnung .
-            filter( strstarts( str(?wohnort_bezeichnung), "Winterthur" ) )
+            filter ( strstarts (str(?wohnort_bezeichnung), "Winterthur" ))
           } 
-    graph ?g2
-          { 
-            ?einsitz kr_10_rel:person ?person .
+    graph <https://linked.opendata.swiss/graph/zhkrdb/ld/10/res/einsitz>
+          { # ueber den Einsitz kommen wir einerseits zur Funktion {Praesident} und andererseits ueber ?partei_assoc zu Partei und Fraktion:
             ?einsitz rdf:type kr_10_genus:Einsitz .
+            ?einsitz kr_10_rel:person ?person .
             ?einsitz kr_10_rel:funktion ?funktion .
+            ?einsitz kr_10_rel:einsitz_parteiassoc ?partei_assoc .
           } 
-    graph ?g3
+    graph <https://linked.opendata.swiss/graph/zhkrdb/ld/10/res/funktion>
           { 
             ?funktion rdf:type kr_10_genus:Funktion__Präsidium .
-            ?funktion ?p1 ?o1 .
           } 
+    OPTIONAL
+    {
+    graph <https://linked.opendata.swiss/graph/zhkrdb/ld/10/res/parteiassociation>
+	{
+              ?partei_assoc kr_10_rel:assoc_partei ?partei .
+	}
+    }
+    OPTIONAL
+    {
+    graph <https://linked.opendata.swiss/graph/zhkrdb/ld/10/res/partei>
+	{
+		?partei kr_10_rel:partei_bezeichnung	?partei_bezeichnung .
+	}
+    }
+    OPTIONAL
+    {
+    graph <https://linked.opendata.swiss/graph/zhkrdb/ld/10/res/parteiassociation>
+	{
+              ?partei_assoc kr_10_rel:assoc_fraktion ?fraktion .
+	}
+    }
+    OPTIONAL
+    {
+    graph <https://linked.opendata.swiss/graph/zhkrdb/ld/10/res/partei>
+	{
+		?fraktion kr_10_rel:fraktion_bezeichnung	?fraktion_bezeichnung .
+	}
+    }
   } 
 }
 ORDER BY ?wohnort_bezeichnung
