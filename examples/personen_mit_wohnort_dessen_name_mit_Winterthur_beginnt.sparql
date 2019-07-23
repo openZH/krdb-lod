@@ -1,0 +1,30 @@
+select *
+where
+{ 
+ 
+  { 
+    graph ?g0 
+          { 
+            ?person rdf:type kr_10_genus:Person .
+            ?person kr_10_rel:wohnort ?wohnort .
+          } 
+    graph ?g1
+          { 
+            ?wohnort kr_10_rel:gemeindename ?wohnort_bezeichnung .
+            filter ( strstarts (str(?wohnort_bezeichnung), "Winterthur" ))
+          } 
+    graph ?g2
+          { 
+            ?einsitz kr_10_rel:person ?person .
+            ?einsitz rdf:type kr_10_genus:Einsitz .
+            ?einsitz kr_10_rel:funktion ?funktion .
+          } 
+    graph ?g3
+          { 
+            ?funktion rdf:type kr_10_genus:Funktion .
+#            ?funktion kr_10_rel:person ?person .
+            ?einsitz ?p ?o .
+          } 
+  } 
+}
+ORDER BY ?wohnort_bezeichnung
